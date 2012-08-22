@@ -8,9 +8,10 @@
 
 % Load basic packages
 \usepackage{balance}  % to better equalize the last page
-\usepackage{graphics} % for EPS, load graphicx instead
+\usepackage{graphicx} % for EPS, load graphicx instead
 \usepackage{times}    % comment if you want LaTeX's default font
 \usepackage{url}      % llt: nicely formatted URLs
+\usepackage{tabularx}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -146,31 +147,60 @@ Our approach consists the following components:
 
 \section{Hierarchical Adaptive Spatial Models}
 
-The complete spatial model consists of a large number of sub-models. The entire model can be viewed as a hierarchy of sub-models in different “orders” (Figure. 1).
+To incorporate different strategies of adaptations, we propose a hierarchical
+spatial model consisting of a large number of sub-models.
+The entire model can be viewed as a hierarchy of sub-models in different
+“orders” (Figure. \ref{fig:hierarchy}).
 
-Figure. 1 Hierarchical spatial models
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=1\columnwidth]{figures/hierarchical-spatial-model.pdf}
+  \caption{Hierarchical spatial models}
+  \label{fig:hierarchy}
+\end{figure}
 
-The zeroth order is the base model which is key, person, and posture independent. The higher order models consist of a combination of spatial models that adapt to hand posture (e.g. one finger, two thumbs, or ten fingers on tablets) , key or bi-letters (e.g. "h/t” where the current target letter is the “h” key and the previous letter is “t”), and the individual user. Each combination of the conditions needs sufficient number of samples to build a reliable model. Each such sub-model would only become active when its reliability passes a set threshold (e.g.100+ points had been collected). otherwise these models that are still “growing” but in “dormant” mode. 
-
-A basic key adaptive model is building a bivariate Gaussian model for each key using data from many different users. Then the key detection process involves choosing the key whose Gaussian model gives the highest probability for the given (x, y) tapping coordinates. When this is combined with posture and individual adaptation, more specialized Gaussian models are built for each key.
+The zeroth order is the base model which is key, person, and posture
+independent. This is the most general model combining all data together. The
+higher order models consist of a combination of spatial models that adapt to hand posture (e.g. one finger, two thumbs, or ten fingers on tablets) , key or bi-letters (e.g. "h/t” where the current target letter is the “h” key and the previous letter is “t”), and the individual user. Each combination of the conditions needs sufficient number of samples to build a reliable model. Each such sub-model would only become active when its reliability passes a set threshold (e.g.100+ points had been collected). otherwise these models that are still “growing” but in “dormant” mode.
 
 We compare key detection accuracy with different models to analyze their relative effectiveness (Table 2). This can inform us the order of the back-off models to use when there is not enough data for higher order models. 10-fold cross validation is used, and all left-handed users (3 out of are removed.The training and testing data sets have different sets of users.
 Evaluation is based on a data set collected from an earlier study of 32
 participants. The details of the study can be found in this paper \cite{}. 
 (Briefly describe the data set.)
 
-The base model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates. 
+The simpliest detection method is checking whether a given tapping point is
+with a certain key bound. The base model has 0 x and y offsets and the same
+spherical covariance matrix for all the keys. Key detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates.
 
-The key adaptive model gives improvement for all three data sets even when the model is built and tested on different sets of users. Since the key adaptive model can be trained offline by collecting data from a large number of users, this shows that it can be used as the basic backup model once we collect enough data. The user and key adaptive model gives much higher accuracy than the posture and key adaptive model. This suggests that user and key adaptation can have higher priority. Only when we do not have enough data for the user, we can use posture and key adaptation. 
+A basic key adaptive model is building a bivariate Gaussian model for each key using data from many different users. Then the key detection process involves choosing the key whose Gaussian model gives the highest probability for the given (x, y) tapping coordinates. When this is combined with posture and individual adaptation, more specialized Gaussian models are built for each key.
 
-Key bound check 91.382% 90.797%
-Base model, 0 offsets, and spherical covariance 92.024% 92.332%
-Base model, 0 offsets with covariance learned from data 92.147% 93.369%
-Key adaptive (min 50 points)  91.977% 93.960%
-Posture (left side keys) & key adaptive 92.942%   93.939% 
-User & key adaptive   93.155% 94.332%
+The difference in key detection accuracy between using the base model only and
+the key adaptive model is not big. It is even surprising that key adaptive model
+gives slightly lower accuracy. and tested on different sets of users.
+Since the key adaptive model can be trained offline by collecting data from a large number of users, this shows that it can be used as the basic backup model once we collect enough data. The user and key adaptive model gives much higher accuracy than the posture and key adaptive model. This suggests that user and key adaptation can have higher priority. Only when we do not have enough data for the user, we can use posture and key adaptation.
 
-Table 2. Comparison of key detection accuracy (no language model) with different spatial models using 10-fold cross validation.
+\begin{table} [tb]
+  \centering
+  \begin{tabular*}{0.5\textwidth}{ | l | c | }
+    \hline
+    Key bound check & 91.382 \\
+    \hline
+    Distance from the center of the keys & 92.024 \\
+    \hline
+    Base model (same Gaussian model for all the keys) & 92.147 \\
+    \hline
+    Key adaptive model  & 91.977 \\
+    \hline
+    Posture and key adaptive & 92.942 \\
+    \hline
+    User and key adaptive   & 93.155 \\
+    \hline
+  \end{tabular*}
+  \caption{Comparison of key detection accuracy (no language model) with
+  different spatial models using 10-fold cross validation.}
+  \label{tab:comparison}
+\end{table}
+
 
 For posture and key adaptation, there are 13.25% and 2.24% reduction in error rates compared to key adaptation only for the Pepper and Salt data sets respectively. Two postures are considered here: one finger versus two thumbs. The accuracy is based on perfect knowledge of the posture which represents an upper bound for posture adaptation for these data sets. In the actual implementation, the posture model can be turned on when we have high enough confidence about the posture classification.
 
@@ -182,7 +212,10 @@ The key spatial model can also be more specialized to include bi-letter patterns
 Figure 2. Comparison of Gaussian models (0.95 confidence ellipses) for letter “e”
 
 \section{Input hand posture adaptation}
-2. Hand-posture classifier 
+To incorporate posture adaptive spatial models, we need to develop a method to
+detect users' posture when they are typing on the touch screens. 
+
+2. Hand-posture classifier
 
 We developed a hand-posture classifier that constantly returns an estimate of the user’s current posture (two thumbs vs. one finger input).
 
@@ -227,15 +260,25 @@ Fig. 5  A look at how key detection accuracy changes as the number of tapping po
 In the decoding process, a higher order more specialized model is used if it meets a set of conditions such as a particular posture mode is detected with high confidence and the corresponding model (e.g. h/t, one-finger) is available (live, matured). Otherwise we back off to a lower order model, all the way to a base model which is key, individual and posture independent if necessary.
 
 \section{Implementation and off-device simulation}
-Spherical cov 91.307% 89.135%
-Learned covariance  91.359% 90.218%
-Key adaptive  91.292% 91.222%
-Posture & key adaptive  91.598% (confidence = 0.90) 91.277% (confidence = 0.97)
-User & key adaptive 91.7438% (confidence = 0.95)  91.255% (confidence = 0.98)
-User & key adaptive (combine user and population Gaussian)  91.486% 91.344% (min points = 50)
-User & key adaptive (combine user and population, distance only)  92.700% 91.785%
+\begin{table}[tb]
+  \centering
+  \begin{tabularx}{\columnwidth}{|X|c|}
+  \hline
+  Spherical cov & 91.307\% \\
+  \hline
+  Learned covariance & 91.359 \\
+  \hline
+  Key adaptive  & 91.292 \\
+  Posture and key adaptive  & 91.598 \\
+  User and key adaptive & 91.7438 \\
+  User and key adaptive (combine user and population Gaussian)  & 91.486\% \\
+  User and key adaptive (combine user and population, distance only) &  92.700\%
+  \\
+  \end{tabularx}
+  \caption{Off device simulation result}
+  \label{tab:off-device}
+\end{table}
 
-Table #. Off device simulation result (on 30% test users)
 
 (With language model result)
 

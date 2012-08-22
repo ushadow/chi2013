@@ -1,9 +1,5 @@
 #TeXlipse project settings
-<<<<<<< HEAD
-#Mon Aug 20 22:09:30 PDT 2012
-=======
-#Thu May 03 09:54:34 EDT 2012
->>>>>>> 1eecc6b96c56e3a57f26a619bc0dd63c35ab7cf1
+#Tue Aug 21 23:35:33 PDT 2012
 markTmpDer=true
 builderNum=2
 outputDir=pdf/
@@ -11,13 +7,8 @@ makeIndSty=
 bibrefDir=
 outputFormat=pdf
 tempDir=tmp
-<<<<<<< HEAD
 mainTexFile=chi2013.tex
 outputFile=chi2013.pdf
-=======
-mainTexFile=document.tex
-outputFile=icmi2012.pdf
->>>>>>> 1eecc6b96c56e3a57f26a619bc0dd63c35ab7cf1
-langSpell=en
+langSpell=
 markDer=true
 srcDir=src/
