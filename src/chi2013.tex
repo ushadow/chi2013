@@ -163,14 +163,24 @@ The zeroth order is the base model which is key, person, and posture
 independent. This is the most general model combining all data together. The
 higher order models consist of a combination of spatial models that adapt to hand posture (e.g. one finger, two thumbs, or ten fingers on tablets) , key or bi-letters (e.g. "h/t” where the current target letter is the “h” key and the previous letter is “t”), and the individual user. Each combination of the conditions needs sufficient number of samples to build a reliable model. Each such sub-model would only become active when its reliability passes a set threshold (e.g.100+ points had been collected). otherwise these models that are still “growing” but in “dormant” mode.
 
-We compare key detection accuracy with different models to analyze their relative effectiveness (Table 2). This can inform us the order of the back-off models to use when there is not enough data for higher order models. 10-fold cross validation is used, and all left-handed users (3 out of are removed.The training and testing data sets have different sets of users.
-Evaluation is based on a data set collected from an earlier study of 32
-participants. The details of the study can be found in this paper \cite{}. 
-(Briefly describe the data set.)
+We compare key detection accuracy with different models to analyze their
+relative effectiveness (Table \ref{tab:comparison}). This can inform us the order of the
+back-off models to use when there is not enough data for higher order models.
+10-fold cross validation is used, and the training and testing data sets have
+different sets of users.
 
-The simpliest detection method is checking whether a given tapping point is
-with a certain key bound. The base model has 0 x and y offsets and the same
-spherical covariance matrix for all the keys. Key detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates.
+Evaluation is based on a data set collected from an earlier study of 32
+participants. Users were given target phrases to type on a Nexus S phone. The
+details of the study can be found in this paper \cite{}.
+We remove the data from 2 left-handed users in our analysis, and are left with
+data from 9 users with one index finger input, 11 users with one thumb input and
+10 users with two thumbs input. We also filtered out points that are 
+
+The simpliest base model can have a Gaussian distribution with 0 x and y
+mean offsets and the same spherical covariance matrix for all the keys. Key
+detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates. 
+One step beyond this is to have a full covriance matrix trained from the
+training data, but still using the same Gaussian model for each key.
 
 A basic key adaptive model is building a bivariate Gaussian model for each key using data from many different users. Then the key detection process involves choosing the key whose Gaussian model gives the highest probability for the given (x, y) tapping coordinates. When this is combined with posture and individual adaptation, more specialized Gaussian models are built for each key.
 
@@ -183,9 +193,9 @@ Since the key adaptive model can be trained offline by collecting data from a la
   \centering
   \begin{tabular*}{0.5\textwidth}{ | l | c | }
     \hline
-    Key bound check & 91.382 \\
+    \tabhead{Spatial model} & \tabhead{Key detection accuracy} \\
     \hline
-    Distance from the center of the keys & 92.024 \\
+    Distance from the center of the keys & 92.024\% \\
     \hline
     Base model (same Gaussian model for all the keys) & 92.147 \\
     \hline
@@ -204,7 +214,9 @@ Since the key adaptive model can be trained offline by collecting data from a la
 
 For posture and key adaptation, there are 13.25% and 2.24% reduction in error rates compared to key adaptation only for the Pepper and Salt data sets respectively. Two postures are considered here: one finger versus two thumbs. The accuracy is based on perfect knowledge of the posture which represents an upper bound for posture adaptation for these data sets. In the actual implementation, the posture model can be turned on when we have high enough confidence about the posture classification.
 
-For user & key adaptation, for each fold, we use 90% of the users to train the combined back-off key models. Then for each of the 10% testing users,  a fraction k of the data for each key is used to train the user adaptive key models. The accuracy of these data points are tested on the combined key models. The remaining 50% of the data for each user are tested on the user adaptive models together with the combined model for backup. The backup is used when there is not enough data for certain key (we used 10 data points) to build the Gaussian model. For the Pepper data set, k is set to be 50%; and for the Salt data set, k is set to be 70%. This is because Pepper data set has larger number of data points per subject (2634 data points / subject) versus that in the Salt data set (777 data points / user).
+For user & key adaptation, for each fold, we use 90\% of the users to train the
+combined back-off key models. Then for each of the 10\% testing users,  a
+fraction k of the data for each key is used to train the user adaptive key models. The accuracy of these data points are tested on the combined key models. The remaining 50% of the data for each user are tested on the user adaptive models together with the combined model for backup. The backup is used when there is not enough data for certain key (we used 10 data points) to build the Gaussian model. For the Pepper data set, k is set to be 50%; and for the Salt data set, k is set to be 70%. This is because Pepper data set has larger number of data points per subject (2634 data points / subject) versus that in the Salt data set (777 data points / user).
 
 The key spatial model can also be more specialized to include bi-letter patterns that occur frequently, for instances, h followed by e, t followed by h etc. Figure 2 shows the (x, y) coordinates of the tapping points for letter “e” from one of our data sets, and the 0.95 confidence ellipses of the Gaussian models for different conditions. The plot shows that when we combine data for all the posture together, the distribution of points for “e” after “h” is very slightly different from that of all “e”. But if we look at “e” after “h” for one-finger input (cyan color), the difference is bigger. Another point to note is that, since these are highly frequent patterns, even a small improvement in detecting these keys based on these more specialized models may give a bigger improvement in the overall key detection accuracy. 
 
@@ -259,7 +271,13 @@ Fig. 5  A look at how key detection accuracy changes as the number of tapping po
 
 In the decoding process, a higher order more specialized model is used if it meets a set of conditions such as a particular posture mode is detected with high confidence and the corresponding model (e.g. h/t, one-finger) is available (live, matured). Otherwise we back off to a lower order model, all the way to a base model which is key, individual and posture independent if necessary.
 
-\section{Implementation and off-device simulation}
+\section{Implementation and simulation}
+
+We did simulation using 20 users' data for training both the posture
+classifier and spatial model, and tested on the other 10 users' data. The
+percentages of one finger input and two thumbs input postures are the same in
+both the training and testing data sets.
+
 \begin{table}[tb]
   \centering
   \begin{tabularx}{\columnwidth}{|X|c|}
@@ -279,8 +297,8 @@ In the decoding process, a higher order more specialized model is used if it mee
   \label{tab:off-device}
 \end{table}
 
+\section{On-device simulation with language model}
 
-(With language model result)
 
 1. Azenkot, S.,  Zhai, S. (2012). Touch Behavior with Different Postures on Soft Smart Phone Keyboards. In Proceedings of MobileHCI (MobileHCI '12). To appear.
 
