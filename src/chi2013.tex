@@ -12,6 +12,7 @@
 \usepackage{times}    % comment if you want LaTeX's default font
 \usepackage{url}      % llt: nicely formatted URLs
 \usepackage{tabularx}
+\usepackage{subfigure}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -214,6 +215,25 @@ Since the key adaptive model can be trained offline by collecting data from a la
 
 For posture and key adaptation, there are 13.25% and 2.24% reduction in error rates compared to key adaptation only for the Pepper and Salt data sets respectively. Two postures are considered here: one finger versus two thumbs. The accuracy is based on perfect knowledge of the posture which represents an upper bound for posture adaptation for these data sets. In the actual implementation, the posture model can be turned on when we have high enough confidence about the posture classification.
 
+\begin{figure}[tb]
+	\centering
+	\subfigure[Key adaptive model]{
+    \includegraphics[width=0.47\columnwidth]{figures/key-model.pdf}
+    \label{fig:subfig1}
+	} ~
+	\subfigure[Caption of subfigure 2]{
+    \includegraphics[width=0.47\columnwidth]{figures/posture-t.pdf}
+    \label{fig:subfig2}
+	}
+	\subfigure[Caption of subfigure 3]{
+    \includegraphics[width=0.47\columnwidth]{figures/posture-tt.pdf}
+    \label{fig:subfig3}
+	}
+	\caption[Optional caption for list of figures]{Caption of subfigures
+	\subref{fig:subfig1}, \subref{fig:subfig2} and \subref{fig:subfig3}}
+	\label{fig:subfigureExample}
+\end{figure}
+
 For user & key adaptation, for each fold, we use 90\% of the users to train the
 combined back-off key models. Then for each of the 10\% testing users,  a
 fraction k of the data for each key is used to train the user adaptive key models. The accuracy of these data points are tested on the combined key models. The remaining 50% of the data for each user are tested on the user adaptive models together with the combined model for backup. The backup is used when there is not enough data for certain key (we used 10 data points) to build the Gaussian model. For the Pepper data set, k is set to be 50%; and for the Salt data set, k is set to be 70%. This is because Pepper data set has larger number of data points per subject (2634 data points / subject) versus that in the Salt data set (777 data points / user).
@@ -236,11 +256,23 @@ The analysis of variance based on the tapping coordinates for each key collected
 Our method of hand-posture classification is based on Fitts’ law which states that the time (T) required to move to a target is a function of the distance (D) to the target and the size (W) of the target (Equation 1).
 T=a+blog2(1+DW)                                                  (1)
 The insight here is that we expect the one-finger input posture follows this law,  but two-thumbs input may not. For example, when the user types “al”, it takes longer time to type using one finger because the distance between these two keys are large, but with two thumb, it can be very fast because she can use the left thumb to type “a” and the right thumb for “l”.
-Figure 3. Tapping points data from input on a Galaxy Nexus phone
 
-Figure. 3 shows the relationship between the time elapsed  and the log distance travelled between consecutive key presses. We can see that for the one-finger input (green points), the time takes increases with distance whereas for the two-thumb input, there is no obvious trend. The difference is more significant when the log distance (natural log) is greater than 5 px.
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=1\columnwidth]{figures/time-distance.png}
+  \caption{Tapping points data from input on a Nexus S phone.}
+  \label{fig:time-distance}
+\end{figure}
 
-Based on this finding, we include the time elapsed and the log distance between two consecutive key presses as the features for the posture classifier. To account for individual typing speed differences, we also use normalized time elapsed between consecutive key presses as the third feature. It is calculated according the following equation:
+Figure. \ref{fig:time-distance} shows the relationship between the time elapsed 
+and the log square distance travelled between consecutive key presses. We can
+see that for the one-finger input (blue and red points), the time taken
+increases with distance whereas for the two-thumb input, there is no obvious
+trend. The difference is more significant when the log square distance (natural
+log) is greater than 10 px.
+
+Based on this finding, we include the time elapsed and the log square distance
+between two consecutive key presses as the features for the posture classifier. To account for individual typing speed differences, we also use normalized time elapsed between consecutive key presses as the third feature. It is calculated according the following equation:
 Normalized time elapsed = time elapsed / average time elapsed for the last 10 key presses
 
 We train a SVM classifier with these 3 features for consecutive tap points that are on different sides of the keyboard and whose log distance is at least 5 px. Table 1 shows the classification accuracies for 3 data sets. For each data set, 70% of the data is used for training and 30% of the data is used for testing. The users in the training and testing data sets are different.
@@ -253,16 +285,26 @@ Classification with a sliding time window 87.894% (27299/31059) 80.427% (9332/11
 Table 1. Posture classification result 
 
 The single tap classifier gives probability scores for the two postures for key taps whose previous key tap is on the different side of the keyboard. For the rest of the key taps, the scores for both postures are 0. In order to classify every key tap and assuming the user does not change posture rapidly, we look at a sliding time window of 10 key taps (about 2 words). For each time window, we use another SVM classifier with the following features:
-Correlation between time elapsed and log distance (this feature has the advantage of being speed independent) (see Figure. 4).
-The average probability score for each tap to be one-finger input.
-The average probability score for each tap to be two-thumb input.
-The average number of taps classified as one-finger input.
-The average number of taps classified as two-thumb input.
+\begin{enumerate}
+\item Correlation between time elapsed and log distance (this feature has the
+advantage of being speed independent) (see Figure. \ref{fig:boxplot}).
+\item The average probability score for each tap to be one-finger input.
+\item The average probability score for each tap to be two-thumb input.
+\item The average number of taps classified as one-finger input.
+\item The average number of taps classified as two-thumb input.
 The sliding time window classifier also gives probability scores for each posture.
-
+\end{enumerate}
 The second row of Table 1 shows the overall classification accuracy for each key tap in the test data set. Because of the sliding window approach, the posture for the first 10 key taps for each new session is unknown, and we can use a lower order spatial model in this case. Also we can turn on the posture adaptive spatial model only when the probability score for one posture is much higher than the other. 
-Figure. 4 Correlation between time elapsed and log distance between consecutive 
-key presses for every 10 keys. There is a stronger correlation for one- 
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=1\columnwidth]{figures/boxplot.pdf}
+  \caption{Correlation between time elapsed and log square distance between
+  consecutive key presses for every 10 keys.}
+  \label{fig:boxplot}
+\end{figure}
+
+Figure. 4  There is a stronger correlation for one- 
 finger input than that for two-thumb input
 3. User adaptation
 
@@ -287,17 +329,46 @@ both the training and testing data sets.
   Learned covariance & 91.359 \\
   \hline
   Key adaptive  & 91.292 \\
+  \hline
   Posture and key adaptive  & 91.598 \\
+  \hline
   User and key adaptive & 91.7438 \\
+  \hline
   User and key adaptive (combine user and population Gaussian)  & 91.486\% \\
+  \hline
   User and key adaptive (combine user and population, distance only) &  92.700\%
   \\
+  \hline
   \end{tabularx}
   \caption{Off device simulation result}
   \label{tab:off-device}
 \end{table}
 
+\begin{figure*}[tb]
+	\centering
+	\subfigure[Key adaptive model]{
+    \includegraphics[width=0.49\columnwidth]{figures/sim-result-1.pdf}
+    \label{fig:subfig1}
+	} 
+	\subfigure[Caption of subfigure 2]{
+    \includegraphics[width=0.49\columnwidth]{figures/sim-result-2.pdf}
+    \label{fig:subfig2}
+	}
+	\subfigure[Caption of subfigure 3]{
+    \includegraphics[width=0.49\columnwidth]{figures/sim-result-1-2.pdf}
+    \label{fig:subfig3}
+	}
+	\subfigure[Caption of subfigure 3]{
+    \includegraphics[width=0.49\columnwidth]{figures/sim-result-2-1.pdf}
+    \label{fig:subfig3}
+	}
+	\caption[Optional caption for list of figures]{Caption of subfigures
+	\subref{fig:subfig1}, \subref{fig:subfig2} and \subref{fig:subfig3}}
+	\label{fig:subfigureExample}
+\end{figure*}
+
 \section{On-device simulation with language model}
+
 
 
 1. Azenkot, S.,  Zhai, S. (2012). Touch Behavior with Different Postures on Soft Smart Phone Keyboards. In Proceedings of MobileHCI (MobileHCI '12). To appear.
