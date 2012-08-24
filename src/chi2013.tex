@@ -172,10 +172,12 @@ different sets of users.
 
 Evaluation is based on a data set collected from an earlier study of 32
 participants. Users were given target phrases to type on a Nexus S phone. The
-details of the study can be found in this paper \cite{}.
+details of the study can be found in this paper \cite{}. Users were asked to
+enter specific phrases. 
 We remove the data from 2 left-handed users in our analysis, and are left with
 data from 9 users with one index finger input, 11 users with one thumb input and
-10 users with two thumbs input. We also filtered out points that are 
+10 users with two thumbs input. We also filtered out points that are 1.5 times
+the height of the key away from the center of the target key.
 
 The simpliest base model can have a Gaussian distribution with 0 x and y
 mean offsets and the same spherical covariance matrix for all the keys. Key
@@ -183,37 +185,52 @@ detection based on this model is essentially choosing the key that has the short
 One step beyond this is to have a full covriance matrix trained from the
 training data, but still using the same Gaussian model for each key.
 
-A basic key adaptive model is building a bivariate Gaussian model for each key using data from many different users. Then the key detection process involves choosing the key whose Gaussian model gives the highest probability for the given (x, y) tapping coordinates. When this is combined with posture and individual adaptation, more specialized Gaussian models are built for each key.
+A basic key adaptive model is building a bivariate Gaussian model for each key 
+using data from many different users. Then the key detection process involves choosing the key whose Gaussian model gives the highest probability for the given (x, y) tapping coordinates. When this is combined with posture and individual adaptation, more specialized Gaussian models are built for each key.
 
 The difference in key detection accuracy between using the base model only and
 the key adaptive model is not big. It is even surprising that key adaptive model
 gives slightly lower accuracy. and tested on different sets of users.
-Since the key adaptive model can be trained offline by collecting data from a large number of users, this shows that it can be used as the basic backup model once we collect enough data. The user and key adaptive model gives much higher accuracy than the posture and key adaptive model. This suggests that user and key adaptation can have higher priority. Only when we do not have enough data for the user, we can use posture and key adaptation.
+Since the key adaptive model can be trained offline by collecting data from a 
+large number of users, this shows that it can be used as the basic backup model once we collect enough data. The user and key adaptive model gives much higher accuracy than the posture and key adaptive model. This suggests that user and key adaptation can have higher priority. Only when we do not have enough data for the user, we can use posture and key adaptation.
 
 \begin{table} [tb]
   \centering
-  \begin{tabular*}{0.5\textwidth}{ | l | c | }
+  \begin{tabular}{|l|c|}
     \hline
-    \tabhead{Spatial model} & \tabhead{Key detection accuracy} \\
+    \tabhead{Spatial model} &
+    \multicolumn{1}{|p{0.3\columnwidth}|}{\centering\tabhead{Key detection
+    accuracy}} \\
     \hline
     Distance from the center of the keys & 92.024\% \\
     \hline
-    Base model (same Gaussian model for all the keys) & 92.147 \\
+    \multicolumn{1}{|p{0.7\columnwidth}|}{Base model (same Gaussian model for
+    all the keys with a full covariance matrix)} & 92.147\% \\
     \hline
-    Key adaptive model  & 91.977 \\
+    Key adaptive model  & 91.977\% \\
     \hline
-    Posture and key adaptive & 92.942 \\
+    Posture and key adaptive & 92.942\% \\
     \hline
-    User and key adaptive   & 93.155 \\
+    User and key adaptive   & 93.155\% \\
     \hline
-  \end{tabular*}
+  \end{tabular}
   \caption{Comparison of key detection accuracy (no language model) with
   different spatial models using 10-fold cross validation.}
   \label{tab:comparison}
 \end{table}
 
+For posture and key adaptation, the best result is obtained when we only do 
+posture adaptation for the keys on the left side. This is consistent with the 
+significance test we mentioned earlier. Two postures are considered here: one finger versus two thumbs.
 
-For posture and key adaptation, there are 13.25% and 2.24% reduction in error rates compared to key adaptation only for the Pepper and Salt data sets respectively. Two postures are considered here: one finger versus two thumbs. The accuracy is based on perfect knowledge of the posture which represents an upper bound for posture adaptation for these data sets. In the actual implementation, the posture model can be turned on when we have high enough confidence about the posture classification.
+There is 12.03\% reduction in error rate compared to key adaptation only. Two
+sample one sided paired t-test shows that the improvement in accuracy is
+significant when we use posture and key adaptation versus key adaptation only (t = -2.4421, df = 29, p = 0.01047).
+
+The accuracy is based on perfect knowledge of the posture which represents an
+upper bound for posture adaptation for these data sets. In the actual 
+implementation, the posture model can be turned on when we have high enough 
+confidence about the posture classification.
 
 \begin{figure}[tb]
 	\centering
@@ -236,9 +253,20 @@ For posture and key adaptation, there are 13.25% and 2.24% reduction in error ra
 
 For user & key adaptation, for each fold, we use 90\% of the users to train the
 combined back-off key models. Then for each of the 10\% testing users,  a
-fraction k of the data for each key is used to train the user adaptive key models. The accuracy of these data points are tested on the combined key models. The remaining 50% of the data for each user are tested on the user adaptive models together with the combined model for backup. The backup is used when there is not enough data for certain key (we used 10 data points) to build the Gaussian model. For the Pepper data set, k is set to be 50%; and for the Salt data set, k is set to be 70%. This is because Pepper data set has larger number of data points per subject (2634 data points / subject) versus that in the Salt data set (777 data points / user).
+fraction k of the data for each key is used to train the user adaptive key
+models. The accuracy of these data points are tested on the combined key models.
+The remaining 50\% of the data for each user are tested on the user adaptive 
+models together with the combined model for backup. The backup is used when 
+there is not enough data for certain key (we used 10 data points) to build the 
+Gaussian model. In this analysis, $k$ is set to be 50\%.
 
-The key spatial model can also be more specialized to include bi-letter patterns that occur frequently, for instances, h followed by e, t followed by h etc. Figure 2 shows the (x, y) coordinates of the tapping points for letter “e” from one of our data sets, and the 0.95 confidence ellipses of the Gaussian models for different conditions. The plot shows that when we combine data for all the posture together, the distribution of points for “e” after “h” is very slightly different from that of all “e”. But if we look at “e” after “h” for one-finger input (cyan color), the difference is bigger. Another point to note is that, since these are highly frequent patterns, even a small improvement in detecting these keys based on these more specialized models may give a bigger improvement in the overall key detection accuracy. 
+The key spatial model can also be more specialized to include bi-letter patterns
+that occur frequently, for instances, h followed by e, t followed by h etc. 
+Figure 2 shows the (x, y) coordinates of the tapping points for letter “e” from 
+one of our data sets, and the 0.95 confidence ellipses of the Gaussian models 
+for different conditions. The plot shows that when we combine data for all the 
+posture together, the distribution of points for “e” after “h” is very slightly 
+different from that of all “e”. But if we look at “e” after “h” for one-finger input (cyan color), the difference is bigger. Another point to note is that, since these are highly frequent patterns, even a small improvement in detecting these keys based on these more specialized models may give a bigger improvement in the overall key detection accuracy.
 
 
 Figure 2. Comparison of Gaussian models (0.95 confidence ellipses) for letter “e”
@@ -247,14 +275,20 @@ Figure 2. Comparison of Gaussian models (0.95 confidence ellipses) for letter �
 To incorporate posture adaptive spatial models, we need to develop a method to
 detect users' posture when they are typing on the touch screens. 
 
-2. Hand-posture classifier
+\subsection{Hand posture classifier}
 
 We developed a hand-posture classifier that constantly returns an estimate of the user’s current posture (two thumbs vs. one finger input).
 
-The analysis of variance based on the tapping coordinates for each key collected from 32 participants shows that, for different postures, there are significant differences in the means of the x coordinate for the keys on the left side of the keyboard and the "space” key (p < 0.05). For the y coordinate, the difference for different postures is significant for the “l”, “m” and “p” keys. This shows that posture adaptation can help with the key detection accuracy.
+The analysis of variance based on the tapping coordinates in the data set shows
+that, for different postures, there are significant differences in the means of
+the $x$ coordinate for the keys on the left side of the keyboard and the
+``space'' key ($p < 0.05$). For the y coordinate, the difference for different
+postures is significant for the “l”, “m” and “p” keys. This shows that posture adaptation can help with the key detection accuracy.
 
 Our method of hand-posture classification is based on Fitts’ law which states that the time (T) required to move to a target is a function of the distance (D) to the target and the size (W) of the target (Equation 1).
-T=a+blog2(1+DW)                                                  (1)
+\begin{align}
+T = a + b\log_2(1 + \frac{D}{W})
+\end{align}                                                  
 The insight here is that we expect the one-finger input posture follows this law,  but two-thumbs input may not. For example, when the user types “al”, it takes longer time to type using one finger because the distance between these two keys are large, but with two thumb, it can be very fast because she can use the left thumb to type “a” and the right thumb for “l”.
 
 \begin{figure}[tb]
@@ -272,17 +306,24 @@ trend. The difference is more significant when the log square distance (natural
 log) is greater than 10 px.
 
 Based on this finding, we include the time elapsed and the log square distance
-between two consecutive key presses as the features for the posture classifier. To account for individual typing speed differences, we also use normalized time elapsed between consecutive key presses as the third feature. It is calculated according the following equation:
-Normalized time elapsed = time elapsed / average time elapsed for the last 10 key presses
+between two consecutive key presses as the features for the posture classifier. 
+To account for individual typing speed differences, we also use normalized time 
+elapsed between consecutive key presses as the third feature. It is calculated according the following equation:
 
-We train a SVM classifier with these 3 features for consecutive tap points that are on different sides of the keyboard and whose log distance is at least 5 px. Table 1 shows the classification accuracies for 3 data sets. For each data set, 70% of the data is used for training and 30% of the data is used for testing. The users in the training and testing data sets are different.
+\begin{align}
+\text{Normalized time elapsed} = \frac{\text{time elapsed}}{\text{average time
+elapsed for the last 10 key presses}}
+\end{align}
 
-The Pepper (84292 filtered data points) and Salt (30308 aligned and filtered data points) data sets we use consist tapping points from different users with different postures. Users were asked to enter specific phrases or repeated words. For the Pepper data set, users typed slowly and more precisely in general while for the Salt data sets, users were instructed to type fast and naturally.
-Pepper data set (phrases) Salt data set (phrases)
-Single tap classification accuracy for keys with previous key on the different side of the keyboard 83.559% (11090/13272) 78.693% (4288/5449)
-Classification with a sliding time window 87.894% (27299/31059) 80.427% (9332/11603)
+We train a SVM classifier with these 3 features for consecutive tap points that 
+are on different sides of the keyboard and whose log square distance is at least
+10px. We use 70\% of the data for training and 30\% of the
+data for testing. The users in the training and testing data sets are different.
 
-Table 1. Posture classification result 
+The Pepper (84292 filtered data points) data sets we use consist tapping points 
+from different users with different postures. The classification accuracy from
+the single tap classifier for keys with previous key on the different sides of
+the keyboard 83.559\% (11090/13272).
 
 The single tap classifier gives probability scores for the two postures for key taps whose previous key tap is on the different side of the keyboard. For the rest of the key taps, the scores for both postures are 0. In order to classify every key tap and assuming the user does not change posture rapidly, we look at a sliding time window of 10 key taps (about 2 words). For each time window, we use another SVM classifier with the following features:
 \begin{enumerate}
@@ -294,26 +335,28 @@ advantage of being speed independent) (see Figure. \ref{fig:boxplot}).
 \item The average number of taps classified as two-thumb input.
 The sliding time window classifier also gives probability scores for each posture.
 \end{enumerate}
-The second row of Table 1 shows the overall classification accuracy for each key tap in the test data set. Because of the sliding window approach, the posture for the first 10 key taps for each new session is unknown, and we can use a lower order spatial model in this case. Also we can turn on the posture adaptive spatial model only when the probability score for one posture is much higher than the other. 
+
+The overall classification accuracy for each key tap with a sliding time window
+is 87.894\% (27299/31059).
+Because of the sliding window approach, the posture for the first 10 key taps for each new session is unknown, and we can use a lower order spatial model in this case. Also we can turn on the posture adaptive spatial model only when the probability score for one posture is much higher than the other.
 
 \begin{figure}[tb]
   \centering
   \includegraphics[width=1\columnwidth]{figures/boxplot.pdf}
   \caption{Correlation between time elapsed and log square distance between
-  consecutive key presses for every 10 keys.}
+  consecutive key presses for every 10 keys. There is a stronger correlation for
+  one- finger input than that for two-thumb input.}
   \label{fig:boxplot}
 \end{figure}
 
-Figure. 4  There is a stronger correlation for one- 
-finger input than that for two-thumb input
 3. User adaptation
 
 Fig. 5  A look at how key detection accuracy changes as the number of tapping points used for building the user adaptive Gaussian model for key ‘E’ increases
 4. Key detection process 
 
-In the decoding process, a higher order more specialized model is used if it meets a set of conditions such as a particular posture mode is detected with high confidence and the corresponding model (e.g. h/t, one-finger) is available (live, matured). Otherwise we back off to a lower order model, all the way to a base model which is key, individual and posture independent if necessary.
-
 \section{Implementation and simulation}
+In the decoding process, a higher order more specialized model is used if it
+meets a set of conditions such as a particular posture mode is detected with high confidence and the corresponding model (e.g. h/t, one-finger) is available (live, matured). Otherwise we back off to a lower order model, all the way to a base model which is key, individual and posture independent if necessary.
 
 We did simulation using 20 users' data for training both the posture
 classifier and spatial model, and tested on the other 10 users' data. The
