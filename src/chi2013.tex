@@ -56,8 +56,8 @@ breaklinks=true,
 % End of preamble. Here it comes the document.
 \begin{document}
 
-\title{Touch keyboard hierarchical spatial models with back-offs for personal 
-and hand posture adaptation}
+\title{Touchscreen Keyboard Hierarchical Spatial Models with Back-offs for
+Hand Posture and Personal Adaptation}
 
 % Note that submissions are blind, so author information should be omitted
 \numberofauthors{3}
@@ -149,7 +149,7 @@ ways of spatial adaptation to improve the key detection accuracy, and provides s
 \section{Related Work}
 There is a body of active research on combining spatial model and language model
 to improve text entry accuracy on a soft touch screen keyboard. As our focus is on the 
-sptial model, we will also mainly look at the related work in spatial model.    
+spatial model, we will also mainly look at the related work in spatial model.    
 
 In terms of key adaptation (i.e. each key has its own model instead of
 sharing the same model), Goodman et al. \cite{Goodman:2002} use bi-variate Gaussian distribution with means, and
@@ -361,11 +361,9 @@ different from that of all “e”. But if we look at “e” after “h” for 
 
 Figure 2. Comparison of Gaussian models (0.95 confidence ellipses) for letter “e”
 
-\section{Input hand posture adaptation}
+\section{Input Hand Posture Classification}\label{sec:posture-classification}
 To incorporate posture adaptive spatial models, we need to develop a method to
 detect users' posture when they are typing on the touch screens. 
-
-\subsection{Hand posture classifier}
 
 We developed a hand-posture classifier that constantly returns an estimate of the user's current posture (two thumbs vs. one finger input).
 
@@ -435,7 +433,7 @@ Because of the sliding window approach, the posture for the first 10 key taps fo
 
 
 \section{Key detection process}\label{sec:key-detection-process}
-In the decoding process, a higher order more specialized model is used if it
+In the detection process, a higher order more specialized model is used if it
 meets a set of conditions such as a particular posture mode is detected with high 
 confidence and the corresponding model (e.g. key 'E' for user A using
 one-finger) is available (live, matured).
@@ -445,7 +443,8 @@ backoff process, and the priority of the model at the same level to use can be
 design choice, but our previous section also gives a guidance and suggestion on
 how to determine the order.
 
-This process also fits nicely with the Chain of Responsibility desgin pattern.
+In terms of implementation, this detection process also fits nicely with the
+Chain of Responsibility desgin pattern.
 Figure~{fig:chain-of-responsibility} shows a simplified version of an object
 diagram showing the interaction between various models. Each higher model can
 have a reference or references to lower order models. When given a pair of touch
@@ -462,14 +461,16 @@ query propagates until a Gaussian model is found.
 \end{figure}
 
 \section{Implementation and Simulation}
-We implemented a prototype with a desgin similar to what is described in
-Section~\ref{sec:key-detection-process} combining online posture
-classification as well. We did a simulation using 20 users' data for training
-both the posture classifier and spatial model, and tested on the other 10 users' data. The percentages of one finger input and two thumbs input postures are the same in both the training and testing data sets.
+We implemented a prototype similar to what is described in
+Section~\ref{sec:key-detection-process}, also combining online posture
+classification. We did a simulation using 20 users' data for training
+both the posture classifier and spatial model, and tested on the other 10 users' 
+data. The percentages of one finger input and two thumbs input postures are the same in both the training and testing data sets.
 
-The off-device simulation is for testing
-key detection error rate without language model. Table~\ref{tab:off-device}
-shows the results.
+\subsection{Off-device Simulation}
+We did off-device simulation to compare
+key detection error rate using different spatial models without language model.
+Table~\ref{tab:off-device} shows the results.
 
 \begin{table}[tb]
   \centering
@@ -496,6 +497,14 @@ shows the results.
   \caption{Off device simulation result}
   \label{tab:off-device}
 \end{table}
+
+The posture and key adaptive model shown here uses the posture classification
+method described in Section~\ref{sec:posture-classification}. As a result, the
+key detction error rate for using this model is compounded with the posture
+classification error rate as well.
+
+As the posture classifier returns a pair of probability scores for both
+postures. We can 
 
 
 \begin{figure}[tb]
@@ -533,7 +542,7 @@ shows the results.
 	\label{fig:subfigureExample}
 \end{figure*}
 
-\section{On-device simulation with language model}
+\subsection{On-device Simulation with Language Model}
 
 \section{Conclusion}
 
