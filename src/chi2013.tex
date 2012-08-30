@@ -13,6 +13,7 @@
 \usepackage{url}      % llt: nicely formatted URLs
 \usepackage{tabularx}
 \usepackage{subfigure}
+\usepackage[usenames,table]{xcolor}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -97,18 +98,10 @@ format details have changed relative to previous years.
 \end{abstract}
 
 \keywords{
-	Guides; instructions; author's kit; conference publications;
-	keywords should be separated by a semi-colon.
-	\\\textcolor{red}{Mandatory section to be included in your final version.}
+	Touchscreen text input; posture adaptation; personalization; adaptive model.
 }
 
-\category{H.5.m.}{Information Interfaces and Presentation (e.g. HCI)}{Miscellaneous
-\\
-\textcolor{red}{See: \url{http://www.acm.org/about/class/1998/}
-for more information and the full list of ACM classifiers and descriptors. 
-Mandatory section: On the submission page
-only the classifiers' letter-number combination will need to be entered.}
-}
+\category{H.5.2.}{Information interfaces and presentation}{User interfaces}[input devices and strategies]
 
 \terms{
 	Human Factors; Design; Measurement. 
@@ -122,41 +115,96 @@ Optional section to be included in your final version.}
 }
 
 \section{Introduction}
-Modern touch screen keyboards are error-tolerant. They can correct sloppy touch
-events to user intended words based on a combination of language model predictions and a spatial model estimation. 
-The spatial model that converts a touch point into the probabilities of keys 
-depends on a number factors: hand-posture (e.g. two thumbs vs. one finger input \cite{Azenkot:2012}), 
-the individual \cite{Findlater:2012} and the target key's position \cite{Azenkot:2012}.
+Mobile devices, such as smart phones and tablets, with touchscreens often use
+a graphically rendered image as a keyboard. Such touchscreen keyboard is also called
+soft keyboard. The lack of tactile feedback and the small key size makes typing on
+such a keyboard slow and error prone \cite{Brewster:2007, Rabin:2004}.
+As a result, modern touchscreen keyboards are error-tolerant. They can correct sloppy touch
+events to user intended words based on a combination of language model prediction 
+and spatial model estimation \cite{AlFaraj:2009, Aulagner:2010, Goodman:2002, Gunawardana:2010}. 
 
-In this paper we explore different ways of touchscreen keyboard adaptation and
+Despite all the efforts, the typing speed and accuracy on a touchscreen keyboard are
+still incomparable with those on a physical keyboard \cite{Hoggan:2008}. In this paper,
+we focus on improving the key press estimation from the spatial model for touchscreen
+keyboards. 
+
+Earlier research show that the spatial model that converts a touch point into probabilities of keys 
+depends on a number factors: hand posture (e.g. two thumbs vs. one finger input \cite{Azenkot:2012}), 
+the individual \cite{Findlater:2012} and the target key's position \cite{Azenkot:2012}.
+In this paper, we explore different ways of touchscreen keyboard spatial model adaptation and
 their effects in key detection accuracy and auto-correction with language
-models. The adataptions we consider are key, posture and individual adaptations. By key adaptation,
-we mean each key has its own spatial model instead of sharing the same model. For instance, 
-the simplest key detection method which finds the closest key to the touch point is not key adpative,
-because it assumes each key has the same offset from the center of the bounding box 
-of the key and same covariance matrix if
-we model the touch point distribution as a bi-variate Gaussian distribution.  
+models. The adataptions we consider are key, posture and individual adaptations. 
+
+Previous research has shown that users' touch points to the keys on a touchscreen
+keyboard can be modeled as bivariate Gaussian distributions $N(\underline\mu, \Sigma)$
+where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
+each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix  
+\cite{Azenkot:2012, Goodman:2002}.
+In this way, the spatial model can be viewed as a generative Gaussian mixture
+model.  Given a pair of touch point coordinates $\underline x \in \mathbb{R}^2$, we can compute
+$P(\underline x | k)$ for each $k$ from a set of possible keys based on the spatial model.
+We adopt this general model in our analysis of the adaptive spatial models.
+Different adaptation methods mean different ways of parameterizing the model.
+
+Our goal is to improve the probablity estimation of the intended key for each touch point.
+At the spatial level, this is mostly important for touch points that lie near the 
+boundary of the keys. For example, Figure~\ref{fig:e-w-ellipses-1} shows several touch points (red dots)
+near the boundary of ``E'' and ``W''. These touch points are from users using two-thumb input.
+The indended key is ``E''. With a simple spatial
+model where each key has the same Gaussian model of 0 mean offsets and the same 
+covariance matrix, the points
+at the left side of the boundary would have higher probability of coming from ``W''.
+With a model that adapts to postures and keys, however, those points will still have higher
+probabililty of coming from ``E''. This is because the Gaussian models for the ``W'' and ``E'' keys have left
+horizontal shifts from their corresponding centers. 
+
+\begin{figure}[tb]
+ \includegraphics[width=1\columnwidth]{figures/key-posture-ellipse.png}
+  \caption{Comparison of Gaussian distributions.}
+  \label{fig:e-w-ellipses-1}
+\end{figure}
+
+Our cross-validation analysis, off-device simulation and on-device simulation based
+on data collected from 32 users show
+that both posture and individual adaptation can improve the probability estimation. For posture 
+adaptation, with perfect posture information, the error reduction is 12.03\%; for individual adaptation, with perfect
+intended key information, the error reduction is 14.68\%. The combination of the two 
+can potentially give further improvement. 
+
+In the real world application, posture classification and user adaptation need to be
+online an in realtime, and these can introduce errors. For instance, when the user switches posture,
+the adapted spatial model may in fact give less accurate estimate if the posture classification
+is wrong. For individual adaptation, we need enough data points to build
+an accurate Gaussian model because the points we use to update a model may not be accurate. 
+To mitigate these problem and consider all the different criteria of adaptation, we 
+introduce a hierarchical spatial models with back-offs for touchscreen keyboards.  
+This means that if the confidence of the posture classification is not high or the Gaussian model for a particular user, posture and key combination is 
+not valid, we back-off to a more general model that only adapts to two, one or even none of 
+the criterion. 
 
 The paper makes the following contributions. First
-We propose a hierarchical adaptive spatial model that combines different
-ways of spatial adaptation to improve the key detection accuracy, and provides seamless back-offs when necessary.
-
- 1. Spatial model building
-2. Hand-posture classifier
-3. User adaptation
-4. Key detection process
+we propose a hierarchical adaptive spatial model that combines different
+ways of spatial adaptation to improve the accuracy of key probability estimation, and provides seamless back-offs when necessary.
+Second we compare the effectiveness of different adaptive strategies.
+The result provides a guidance on the priority of the adaptation strategies to use during 
+back-off. Third We develop a posture classification method that gives 86.4\% accuracy in
+classifying each touch point into either one-finger or two-thumb input. Finally, we 
+combined posture classification and the hierachcial adaptive spatial model in off-device and 
+on-device simulation and showed that posture and individual adapation can improve the key probability
+estimation.
 
 \section{Related Work}
 There is a body of active research on combining spatial model and language model
-to improve text entry accuracy on a soft touch screen keyboard. As our focus is on the 
-spatial model, we will also mainly look at the related work in spatial model.    
+to improve text entry accuracy on a soft touchscreen keyboard. As our focus is on the 
+spatial model, we will also mainly look at the related work in this aspect.    
 
 In terms of key adaptation (i.e. each key has its own model instead of
-sharing the same model), Goodman et al. \cite{Goodman:2002} use bi-variate Gaussian distribution with means, and
-covariance matrices computed separately for each key.
+sharing the same model), Goodman et al. \cite{Goodman:2002} use bivariate Gaussian distribution with means, and
+covariance matrices computed separately for each key. Their study is based on stylus input, and
+no posture or individual adaptation is considered.
 
-
-Gunawardana et al. 
+Building on \cite{Goodman:2002}, Gunawardana et al. use restricted bivariate Gaussian
+models in their anchored key-target resizing method.
 
 Findlater et al. \cite{Findlater:2012} uses a J48 classifier to classify
 each key-press to specific keys for ten-finger touchscreen typing. They
@@ -180,8 +228,6 @@ keys are to the left. This suggests that automatic posture detection and posture
 adaptive spatial model can potentially improve key detection accuracy. They listed those observations but
 did not further investigate how posture adpatation can be implemented and how it can atually
 affect key detection accuracy.
-
-When the user switches hand posture, the adapted spatial model may in fact give less accurate estimations in the transient period of adaptation. To mitigate this problem and consider all the different facets of adaptation, we designed a hierarchical spatial models with back-offs for touch keyboards.  
 
 Our approach consists the following components:
 
@@ -445,7 +491,7 @@ The sliding time window classifier gives a final probability score $p_y$ for pos
 $y$ for each touch point. Again $\displaystyle\sum_{y\in \mathcal{Y}}p_y = 1$. To evaluate the classification accuracy, we set the the
 classified posture to be $y$ if $p_y > 0.5$. With this, the overall classification 
 accuracy for each touch point with a sliding time window
-is 87.894\% (27299/31059).
+is 86.401\% (23128/26769).
 
 Because of the sliding window approach, the posture for the first few touch points  
 for each new session is unknown. In this case, we can use a lower order spatial 
@@ -461,7 +507,6 @@ higher than the other.
   one- finger input than that for two-thumb input.}
   \label{fig:boxplot}
 \end{figure}
-
 
 \section{Key detection process}\label{sec:key-detection-process}
 In the detection process, a higher order more specialized model is used if it
@@ -656,6 +701,72 @@ at the effect of posture adaptation for each invidual, i.e., each indidual has t
 for each posture and key combination.
 
 \subsection{On-device Simulation with Language Model}
+We also did a on-device simulation with language model auto-correction to see the
+the effect of posture adaptation. The language model is the most basic one which
+gives the same frequency for all the possible words in the dictionary. It does not
+correct substition, insertion or deletion errors either.
+
+During the decoding process, the system computes the cost of each touch point to
+each key using the spatial model. The cost is the negative of the log probability of
+the touch point given a Gaussian model for a certain key.
+
+The metric we use is the mean word distance between the target phrase and the detected
+phrase after auto correction across the users. The word distance is calcualted using 
+edit distance at the word level. This means converting each phrase to a number coded
+string (same phrase has the same numeric code), and then the edit distance is computed
+between the two number strings. Substition, deletion and insertion all have the same
+cost. The higher the score, the better the result.
+
+With key adapative model only, the final score is 80.078; and with posture and key
+adaptive model, the final score is 80.529. Table~\ref{tab:on-device} shows all the examples
+in the test users where the detected phrases are correct when using posture and key adaptive spatial model, but
+are wrong when using key adaptve only spatial model. We can see that in those examples,
+the posture and key adpative model can correctly detect the phrases because it
+correctly distinguish the neighboring keys between ``A'' and ``S'', ``S'' and ``D'',
+``D'' and ``F'', ``F'' and ``G'', ``W'' and ``E''. 
+
+There are also 4 cases there the detected phrases using key adaptive model is correct, but the ones
+using posture and 
+
+This shows that how the posture adaptive spatial model can potentially be combined 
+with language model to give better auto correction result.
+
+\begin{table*}[tb]
+  \centering
+  \begin{tabularx}{0.925\textwidth}{|l|l|l|l|}
+  \hline
+  \tabhead{Input posture} & \tabhead{Target phrase} & \tabhead{Detected phrase with key adaptive model} 
+  & \multicolumn{1}{|p{0.526\columnwidth}|}{\tabhead{Detected pharase with posture and key adaptive model}}\\
+  \hline
+  two-thumb & the dreamers of dreams & the {\color{red}dream era} of dreams & the dreamers of dreams  \\
+  \hline
+  two-thumb & handicapped persons & {\color{red}handicap pes} persons & handicapped persons \\
+  \hline
+  two-thumb & she wears too much makeup & {\color{red}a he} wears too much makeup & she wears too much makeup \\
+  \hline
+  one-finger & my bare face in the wind & my bare face in the {\color{red}wins} & my bare face in the wind \\ 
+  \hline
+  two-thumb & a lie makes the nose grow & a lie {\color{red}ma kea} the nose grow & a lie makes the nose grow \\
+  \hline 
+  two-thumb & the bathroom is clean & the bathroom is {\color{red}cl wan} & the bathroom is clean \\
+  \hline 
+  two-thumb & travel at light speed & travel at light {\color{red}a peed} & travel at light speed \\ 
+  \hline
+  two-thumb & traveling requires fuel & {\color{red}travel inf require a} fuel & traveling requires fuel \\
+  \hline 
+  two-thumb & most golfers love the game & most {\color{red}gold ers} love the game & most golfers love the game \\ 
+  \hline
+  two-thumb & win first prize & win {\color{red}dir st} prize & win first prize \\ 
+  \hline
+  two-thumb & if at first you fail & if at {\color{red}dir st} you fail & if at first you fail \\ 
+  \hline
+  \end{tabularx}
+  \caption{Examples of on-device simulation where the detected phrase is correct
+  with posture and key adaptive spatial model and incorrect with key adaptive spatial
+  model.}
+  \label{tab:on-device}
+\end{table*}
+
 
 \section{Conclusion}
 
