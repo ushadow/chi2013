@@ -128,8 +128,8 @@ still incomparable with those on a physical keyboard \cite{Hoggan:2008}. In this
 we focus on improving the key press estimation from the spatial model for touchscreen
 keyboards. 
 
-Earlier research show that the spatial model that converts a touch point into probabilities of keys 
-depends on a number factors: hand posture (e.g. two thumbs vs. one finger input \cite{Azenkot:2012}), 
+The spatial model that converts a touch point into probabilities of keys 
+can depend on a number factors: hand posture (e.g. two thumbs vs. one finger input \cite{Azenkot:2012}), 
 the individual \cite{Findlater:2012} and the target key's position \cite{Azenkot:2012}.
 In this paper, we explore different ways of touchscreen keyboard spatial model adaptation and
 their effects in key detection accuracy and auto-correction with language
@@ -139,7 +139,7 @@ Previous research has shown that users' touch points to the keys on a touchscree
 keyboard can be modeled as bivariate Gaussian distributions $N(\underline\mu, \Sigma)$
 where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
 each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix  
-\cite{Azenkot:2012, Goodman:2002}.
+\cite{Azenkot:2012, Goodman:2002, Rashid:2008}.
 In this way, the spatial model can be viewed as a generative Gaussian mixture
 model.  Given a pair of touch point coordinates $\underline x \in \mathbb{R}^2$, we can compute
 $P(\underline x | k)$ for each $k$ from a set of possible keys based on the spatial model.
@@ -194,17 +194,57 @@ on-device simulation and showed that posture and individual adapation can improv
 estimation.
 
 \section{Related Work}
-There is a body of active research on combining spatial model and language model
-to improve text entry accuracy on a soft touchscreen keyboard. As our focus is on the 
+There is a body of active research on using spatial model, language model, or a combination
+of the two to improve text entry accuracy on a soft touchscreen keyboard. For examples, 
+Al Faraj et al. \cite{AlFaraj:2009} and Magnien et al. \cite{Magnien:2004} both use
+visual highlight of the next possible keys to aid users' typing. Their predictions of the next keys are
+based on language model. As our focus is on the 
 spatial model, we will also mainly look at the related work in this aspect.    
 
-In terms of key adaptation (i.e. each key has its own model instead of
-sharing the same model), Goodman et al. \cite{Goodman:2002} use bivariate Gaussian distribution with means, and
-covariance matrices computed separately for each key. Their study is based on stylus input, and
-no posture or individual adaptation is considered.
+Kristensson et al. \cite{Kristensson:2005} propose a geometric pattern matching technique to improve 
+stylus input accuracy. They treat the touch points on a stylus keyboard as geometric pattern. 
+This pattern is then matched agains patterns formed by 
+the letter key center positions of legitimate words in a lexicon. Similar to this approach,
+they also develop a gesture-based stylus input method where users only need to stroke between the keys \cite{Kristensson:2004}.
+Their approaches essentially use a combination of spatial model and language model. However, 
+their spatial model is not adaptive as they treat every key to have 0 offsets from 
+the key center. While our focus is on tapping input, the same adaptive spatial model
+can be applied to the gesture-based input.
 
-Building on \cite{Goodman:2002}, Gunawardana et al. use restricted bivariate Gaussian
-models in their anchored key-target resizing method.
+In terms of spatial model that is adaptive to the keys (i.e. each key has its own model instead of
+sharing the same model), Goodman et al. \cite{Goodman:2002} use bivariate Gaussian distribution with means, and
+covariance matrices computed separately for each key in their study on stylus input. Zhai et al. \cite{Zhai:2002} also show that
+the hit points for each key on a Metropolis keyboard \cite{Zhai:2000} are normally distributed and 
+the centers of the distributions shift to different directions depending on the positions of
+the keys. In their relative keyboard input system, Rashid et al. \cite{Rashid:2008} also use a different bivariate
+Gaussian for each key. The error rate of their system is high because the lack of 
+a priroi determined keyboard position.
+
+Building on \cite{Goodman:2002}, Gunawardana et al. \cite{Gunawardana:2010} use restricted bivariate Gaussian
+models in their anchored key-target resizing method. Key-target resizing means dynamically
+adjusting the underlying target areas of the keys based on their probabilities. The probabilities can 
+be a combination of spatial model probabilities and language model probabilities.
+They argue that overly aggressive
+key-target resizing can sometimes prevent users from their desired text, and hence violate
+users' expection about keyboard functionality. They ensure that touch points within
+the anchor area of a key is always detected as that key irrespective to the lanuage model.
+
+There is also a number of research related to personal adaptation. 
+Rudchenko et al. \cite{Rudchenko:2011}
+developed a text entry game called \textit{Text Text Revolution} that provides 
+targeting words for users to type to improve their typing experience. As a side effect,
+the game also generates labeled touch point data which can be used as
+training data to build the spatial models. They explore the effect of personal adaptation
+by using the touch points from the first 10 rounds (about 250 characters and 50 words per round) of each 
+participant's game play to build the personalized model for each key, and simulating the key detection
+process for the second 10 rounds. Their result shows that with key-target resizing base on
+spatial model probabililty only and using the training data from all the users combined
+gives an error reduction of 18.9\% over no key-target resizing. When using personalized
+key-target resizing, there is a further 2.84\% error reduction over non-personalized key-target resizing.
+Their results show the benefit of individual adaptation in an ideal condition where the 
+intended key is known. In the real world application, the keys users intend to hit are unknown and
+can only be inferred base on the current spatial and language models. In our simulation, we assume the 
+intended keys are unknown, and hence the result may be closer to the real world situaton. 
 
 Findlater et al. \cite{Findlater:2012} uses a J48 classifier to classify
 each key-press to specific keys for ten-finger touchscreen typing. They
@@ -214,10 +254,14 @@ In their user study, each key was intially seeded from 5 points sampled from
 a bibariate Gaussian distribution, and the keyboard only started adatping
 after a minimum of 10 points were collected from key presses. They did not
 give reason about the choice of theses numbers, and did not explore the
-effect of these numbers with respect to accuracy. They also assume that the same
-individual would maintain the same hand posture.
+effect of these numbers with respect to accuracy. 
 
-We observe that the same individual may change hand posture even on the same device. 
+The study from Findlater et al. also shows that displaying the adaptation visually can hinder
+the performance. This result is also supported by the findings from Himberg et al. \cite{Himberg:2003} who 
+studied vidually adaptive nine-key numeric keypads based on individuals.  
+
+The key and individual adaptive methods mention earlier all assume that users' input posture
+remain the same. We observe that the same individual may change hand posture even on the same device. 
 The study from Azenkot and Zhai [1] shows that there are significant differences 
 in typing speed and error rate between two-thumb input posture and one-finger 
 input posture. More importantly, the horizontal and vertical offsets are 
@@ -229,10 +273,15 @@ adaptive spatial model can potentially improve key detection accuracy. They list
 did not further investigate how posture adpatation can be implemented and how it can atually
 affect key detection accuracy.
 
-Our approach consists the following components:
+Finally, various researchers have explored other dimensions to improve the overall
+text input experience on touchscreen keyboard. One dimesion is using hardware
+augmentations to provide vibro-tactile feedback \cite{Hoggan:2008, Brewster:2007}. 
+Another dimension is using alternative keyboard layouts that are optimized for typing speed (wpm)
+based on Fitts' law and character level digraph frequencies \cite{Zhai:2000, MacKenzie:1999}.
+These dimensions are orthogonal to the lanuguage and the spatial models, and can be potentially 
+combined together to further increase the input accuracy and speed.
 
 \section{Hierarchical Adaptive Spatial Models}
-
 To incorporate different strategies of adaptations, we propose a hierarchical
 spatial model consisting of a number of sub-models.
 The entire model can be viewed as a hierarchy of sub-models in different
@@ -343,13 +392,14 @@ the $x$ coordinate for the keys on the left side of the keyboard and the
 
 There is 12.03\% reduction in error rate compared to key adaptation only. Two
 sample one sided paired t-test shows that the improvement in accuracy is
-significant when we use posture and key adaptation versus key adaptation only (t = -2.4421, df = 29, p = 0.01047).
+significant when we use posture and key adaptation versus key adaptation only (t (29) = -2.4421, p = 0.01).
 
 Figure \ref{fig:key-boundary} shows the comparison of effective areas of the keys
 with different spatial models. Each colored area presents the region such that if the
 user tap in that region, the underlying spatial model will classify that key with the 
 corresponding key label. Note how the key areas for the left-side keys shift to the left
-for two-thumb input and shift slightly to the right for one-finger input.
+for two-thumb input and shift slightly to the right for one-finger input. The difference in 
+the effective key areas is the same concept as key-target resizing mentioned in \cite{Rudchenko:2011, Gunawardana:2010}.
 
 \begin{figure}[tb]
 	\centering
