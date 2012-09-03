@@ -32,6 +32,7 @@ PlotPointsEllipses <- function(points, ellipses.data, keybounds) {
   xrange <- c(min(keybounds$left), max(keybounds$right))
   yrange <- c(min(keybounds$bottom), max(keybounds$top))
 
+  SetPlotSize(xrange, yrange)
   plot(xrange, yrange, type = 'n')
   DrawKeyWithText(keybounds)
   points(points$xkeyboard, points$ykeyboard, pch = 19, col = 'red')

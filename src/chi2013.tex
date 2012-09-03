@@ -105,13 +105,13 @@ used with the adpative spatial model to improve the key probability estimation a
 \end{abstract}
 
 \keywords{
-	Touchscreen text input; posture adaptation; personalization; adaptive model.
+  Touchscreen text input; posture adaptation; personalization; adaptive model.
 }
 
 \category{H.5.2.}{Information interfaces and presentation}{User interfaces}[input devices and strategies]
 
 \terms{
-	Human Factors; Measurement.}
+  Human Factors; Measurement.}
 
 \section{Introduction}
 Mobile devices, such as smart phones and tablets, with touchscreens often use
@@ -130,17 +130,17 @@ can depend on a number factors: hand posture (e.g. two thumbs vs. one finger inp
 the individual \cite{Findlater:2012} and the target key's position \cite{Azenkot:2012}.
 We explore different ways of spatial model adaptation and
 their effects in key detection accuracy and auto-correction with a language
-model. The adataptions we consider are key, posture and individual adaptations. 
+model. The adaptations we consider are key, posture and individual adaptations. 
 
-Our goal is to improve the probablity estimation of the intended key for each touch point.
+Our goal is to improve the probability estimation of the intended key for each touch point.
 At the spatial level, this is mostly important for touch points that lie near the 
 boundary of the keys. For example, Figure~\ref{fig:e-w-ellipses-1} shows several touch points (red dots)
 near the boundary of ``E'' and ``W''. These touch points are from users using two-thumb input.
-The indended key is ``E''. With a simple spatial
+The intended key is ``E''. With a simple spatial
 model where each key has the same model, say a Gaussian model \cite{Goodman:2002} of 0 mean offsets, the points
 at the left side of the boundary would have a higher probability of targeting ``W''.
 With a model that adapts to postures and keys, however, those points will still have higher
-probabililty of targeting ``E''. This is because the Gaussian models for the ``W'' and ``E'' keys have left
+probability of targeting ``E''. This is because the Gaussian models for the ``W'' and ``E'' keys have left
 horizontal shifts from their corresponding centers for the two-thumb input posture. 
 
 \begin{figure}[tb]
@@ -174,9 +174,8 @@ Second we compare the effectiveness of different adaptive strategies.
 The result provides a guidance on the priority of the adaptation strategies to use during 
 back-off. Third we develop a posture classification method that gives 86.4\% accuracy in
 classifying each touch point into either one-finger or two-thumb input. Finally, we 
-combined posture classification and the hierachcial adaptive spatial model in off-device and 
-on-device simulation and show that posture and individual adapation can improve the key probability
-estimation.
+combined posture classification and the hierarchcial adaptive spatial model in off-device and 
+on-device simulation and show that posture and individual adaptation can improve the key probability estimation.
 
 \section{Related Work}
 There is a body of active research on using spatial model, language model, or a combination
@@ -228,23 +227,23 @@ key-target resizing, there is a further 2.84\% error reduction.
 Their results show the benefit of individual adaptation in an ideal condition where the 
 intended key is known. In the real world application, the keys users intend to hit are unknown and
 can only be inferred based on the current spatial and language models. In our simulation, we assume the 
-intended keys are unknown, and hence the result may be closer to the real world situaton. 
+intended keys are unknown, and hence the result may be closer to the real world situation. 
 
 Findlater et al. \cite{Findlater:2012} uses a J48 classifier to classify
 each key-press to specific keys for ten-finger touchscreen typing. They
 focus on individual adaptation and suggest that personalized touch keyboard
  can improve typing speed.  
-In their user study, each key was intially seeded from 5 points sampled from
-a bivariate Gaussian distribution, and the keyboard only started adatping
+In their user study, each key was initially seeded from 5 points sampled from
+a bivariate Gaussian distribution, and the keyboard only started adapting
 after a minimum of 10 points were collected from key presses. They did not
 give reasons about the choice of theses numbers, and did not explore the
 effect of these numbers with respect to accuracy. 
 
 The study from Findlater et al. also shows that displaying the adaptation visually can hinder
 the performance. This result is also supported by the findings from Himberg et al. \cite{Himberg:2003} who 
-studied vidually adaptive nine-key numeric keypads for individuals.  
+studied visually adaptive nine-key numeric keypads for individuals.  
 
-The key and individual adaptive methods mention earlier all assume that users' input posture
+The key and individual adaptive methods mentioned earlier all assume that users' input posture
 remain the same. We observe that the same individual may change hand posture even on the same device. 
 The study from Azenkot and Zhai [1] shows that there are significant differences 
 in typing speed and error rate between two-thumb input posture and one-finger 
@@ -254,15 +253,14 @@ one-finger input, the touch points for the keys on the left side of the keyboard
 shit to the right from the center of the target key whereas for two-thumb, the shift for those
 keys are to the left. This suggests that automatic posture detection and posture
 adaptive spatial model can potentially improve key detection accuracy. They listed those observations but
-did not further investigate how posture adpatation can be implemented and how it can atually
-affect key probability estimation accuracy.
+did not further investigate how posture adaptation can be implemented and how it can actually affect key probability estimation accuracy.
 
 Finally, various researchers have explored other dimensions to improve the overall
-text input experience on touchscreen keyboard. One dimesion is using hardware
+text input experience on touchscreen keyboard. One dimension is using hardware
 augmentations to provide vibro-tactile feedback \cite{Brewster:2007, Hoggan:2008}. 
 Another dimension is using alternative keyboard layouts that are optimized for typing speed (wpm)
 based on Fitts' law and character level digraph frequencies \cite{Zhai:2000, MacKenzie:1999}.
-These dimensions are orthogonal to the lanuguage and the spatial models, and can be potentially 
+These dimensions are orthogonal to the language and the spatial models, and can be potentially 
 combined together to further increase the input accuracy and speed.
 
 \section{Hierarchical Adaptive Spatial Models}
@@ -287,7 +285,7 @@ The entire model can be viewed as a hierarchy of sub-models in different
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1\columnwidth]{figures/hierarchical-spatial-model.pdf}
+  \includegraphics[width=0.9\columnwidth]{figures/hierarchy.pdf}
   \caption{Hierarchical spatial models}
   \label{fig:hierarchy}
 \end{figure}
@@ -367,10 +365,10 @@ the height of the key away from the center of the target key. The ratio
 of the number of users using one-finger input to that using two-thumb input is kept the same
 for the training and testing data sets throughout the cross-validation.
 
-The simpliest base model can have a Gaussian distribution with 0 mean $x$ and $y$
+The simplest base model can have a Gaussian distribution with 0 mean $x$ and $y$
  offsets and the same spherical covariance matrix for all the keys. Key
 detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates. 
-One step beyond this is having a full covriance matrix $\Sigma$ trained from the
+One step beyond this is having a full covariance matrix $\Sigma$ trained from the
 training data, but still using the same Gaussian model $N(\underline 0, \Sigma)$ for each key.
 
 \subsection{Key Adaptation}
@@ -388,12 +386,36 @@ $\underline x$, i.e.,
 The difference in key detection accuracy between using the base model only and
 the key adaptive model is not big. It is even surprising that key adaptive model
 gives slightly lower accuracy (contrary to the result shown in
-\cite{Rudchenko:2011}). A closer look at the data shows that the most number of
-errors occurs between ``E'' and ``W''. Because there are more one-finger input users in the data set, the Gaussian models for ``E'' and ``W'' have right horizontal offsets. However, for
-the two-thumb input, there is usually a left horizontal offsets. Hence there are
-more errors for the two-thumb input when we use the key adaptive model.
+\cite{Rudchenko:2011}). A closer look at the data shows that the most frequent
+error is confusing ``E'' with ``W''. Figure \ref{fig:key-adaptive} shows the effective areas of the keys
+when using the key adaptive model. Each colored area presents the region such that if the
+user tap in that region, the underlying spatial model will classify that key with the 
+corresponding key label. We can observe that the area of ``W'' key goes slightly beyond 
+the boundary between ``E'' and ``W''. This is because there are more one-finger input users in the data set, 
+and there tend to be a right horizontal offset for keys on the left side of the keyboard
+when using one-finger input. However, for
+the two-thumb input, there is usually a left horizontal offset. Hence when we use
+this spatial model , there are more errors for the two-thumb input data.
 
-This suggests that key adpative model may not always be effectivce unless we
+\begin{figure}[tb]
+  \centering
+  \subfigure[Key adaptive model]{
+    \includegraphics[width=0.47\columnwidth]{figures/key-model.pdf}
+    \label{fig:key-adaptive}
+  } ~
+  \subfigure[Posture and key adaptive model for one-finger input]{
+    \includegraphics[width=0.47\columnwidth]{figures/posture-t.pdf}
+    \label{fig:one-finger}
+  }
+  \subfigure[Posture and key adaptive model for two-thumb input]{
+    \includegraphics[width=0.47\columnwidth]{figures/posture-tt.pdf}
+    \label{fig:two-thumb}
+  }
+  \caption{Comparison of effective key areas with different spatial models}
+  \label{fig:key-boundary}
+\end{figure}
+
+This suggests that key adaptive model may not always be effective unless we
 have enough data and a balanced number of postures in the training data. 
 
 The key spatial model can also be more specialized to include bi-letters
@@ -415,8 +437,8 @@ give a bigger improvement in the overall key probability estimation accuracy.
 ``E''.}
 \end{figure}
 
-Due to the scope of this paper, however, we do not analyze further about the
-effectiveness of adapting to bi-letter patterns, but only leave it as a future
+Due to the scope of this paper, we do not analyze further about the
+effectiveness of adapting to bi-letter patterns, leaving it as a future
 work.
 
 \subsection{Posture Adaptation}
@@ -426,7 +448,7 @@ compared to key adaptation only. The two-sample one-sided paired t-test shows
 that the improvement in accuracy is significant when we use posture and key 
 adaptation versus key adaptation only (t (29) = -2.4421, p = 0.01).
 
-There can be different levels of complexy for posture adapation. For the most complex one, we can build two models for each key for the 
+There can be different levels of complexity for posture adaptation. For the most complex one, we can build two models for each key for the 
 two input posture $N(\underline \mu_{y,k}, \Sigma_{y,k})$ for $y \in
 \{\text{one-finger, two-thumb}\}$; or we can do posture adaptation for a certain
 number of keys.
@@ -443,37 +465,17 @@ In addition, the analysis of variance based on the tapping coordinates from the
 data set shows that, for different postures, there are significant differences in the means of
 the $x$ coordinate for the keys on the left side of the keyboard ($p < 0.05$). 
 
-Figure \ref{fig:key-boundary} shows the comparison of effective areas of the keys
-with different spatial models. Each colored area presents the region such that if the
-user tap in that region, the underlying spatial model will classify that key with the 
-corresponding key label. Note how the key areas for the left-side keys shift to the left
-for two-thumb input and shift slightly to the right for one-finger input. The difference in 
+Figure~\ref{fig:one-finger} and \ref{fig:two-thumb} show the comparison of effective areas of the keys
+with spatial models adapted to one-finger input and two-thumb input respectively. Note how the key areas for the left-side keys shift to the left
+for two-thumb input, and shift to the right for one-finger input. The difference in 
 the effective key areas is the same concept as key-target resizing mentioned in \cite{Rudchenko:2011, Gunawardana:2010}.
 
-\begin{figure}[tb]
-	\centering
-	\subfigure[Key adaptive model]{
-    \includegraphics[width=0.47\columnwidth]{figures/key-model.pdf}
-    \label{fig:subfig1}
-	} ~
-	\subfigure[Posture and key adaptive model for one-finger input]{
-    \includegraphics[width=0.47\columnwidth]{figures/posture-t.pdf}
-    \label{fig:subfig2}
-	}
-	\subfigure[Posture and key adaptive model for two-thumb input]{
-    \includegraphics[width=0.47\columnwidth]{figures/posture-tt.pdf}
-    \label{fig:subfig3}
-	}
-	\caption{Comparison of effective key areas with different spatial models}
-	\label{fig:key-boundary}
-\end{figure}
-
-Another point to note is that the error rate is based on perfect knowledge of
-the posture which represents an upper bound for posture adaptation for this data
+The error rate in Table~\ref{tab:comparison} is based on perfect knowledge of
+the posture which represents an lower bound for posture adaptation for this data
 set. In the real world implementation, the online posture classification may
-introduce errors. To mitigate the propblem, the posture model can be turned on
+introduce errors. To mitigate the problem, the posture adaptive model can be turned on
 when we have high enough confidence about the posture classification (i.e., the
-back-off mechanism).
+back-off mechanism). The details of this is explained in a later section.
 
 \subsection{Individual Adaptation}
 The user and key adaptive model gives the lowest error rate compared to the
@@ -501,15 +503,15 @@ user in our data set besides the ``space'' key. For other keys, they have
 relatively small number of data points, and hence it is hard to do the
 analysis on them. However, we believe the result can be transferrable to other
 keys if we have enough data points for them too. Also due to the limited number
-of data points, we only show the trend when the nubmer used to build the user
+of data points, we only show the trend when the number used to build the user
 model for each key is 70.
 However, the figure still shows a general trend, and suggests that a number in 
-the order of a hundred is probably a good nubmer. When we do not have enough 
+the order of a hundred is probably a good number. When we do not have enough 
 data for the user, we can back-off to posture and key adaptation.
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1\columnwidth]{figures/user-adapt-e.png}
+  \includegraphics[width=0.9\columnwidth]{figures/user-adapt-e.png}
   \caption{Tapping points data from input on a Nexus S phone.}
   \label{fig:user-adapt}
 \end{figure}
@@ -529,7 +531,7 @@ The insight here is that we expect the one-finger input posture follows this law
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=1\columnwidth]{figures/time-distance.png}
+  \includegraphics[width=0.9\columnwidth]{figures/time-distance.png}
   \caption{Tapping points data from input on a Nexus S phone.}
   \label{fig:time-distance}
 \end{figure}
@@ -574,7 +576,7 @@ advantage of being speed independent) (see Figure. \ref{fig:boxplot}).
 \item The average number of taps classified as two-thumb input.
 \end{enumerate}
 The history of the touch points are cleared for every new typing session.
-The choice of the size of the sliding window represnts a trade-off between the 
+The choice of the size of the sliding window represents a trade-off between the 
 accuracy of the classification and how responsive the system is when the user
 changes posture. We found that the assumption that the user does not change posture
 often within 2 words is reasonable, but more work can be done to investigate this
@@ -615,7 +617,7 @@ query propagates until a Gaussian model is found.
 \begin{figure}[tb]
   \centering
   \includegraphics[width=1\columnwidth]{figures/chain-of-responsibility.pdf}
-  \caption{An object diagrame showing the interaction between higher and lower
+  \caption{An object diagram showing the interaction between higher and lower
   order spatial models.}
   \label{fig:chain-of-responsibility}
 \end{figure}
@@ -643,10 +645,10 @@ Table~\ref{tab:off-device} shows the results.
   \hline
   Posture and key adaptive model & 8.394\% \\
   \hline
-  User and key adaptive model  & 7.621\%
+  Individual and key adaptive model  & 7.621\%
   \\
   \hline
-  User, posture and key adaptive model &  7.498\%
+  Posture, individual and key adaptive model &  7.498\%
   \\
   \hline
   \end{tabularx}
@@ -654,15 +656,15 @@ Table~\ref{tab:off-device} shows the results.
   \label{tab:off-device}
 \end{table}
 
-\subsubsection{Posture Adaptation}
+\subsubsection{Posture Adaptation}\label{sec:off-device-posture}
 The posture and key adaptive model shown here uses the posture classification
-method described in Section~\ref{sec:posture-classification}. As a result, the
-key detction error rate for using this model is compounded with the posture
+method described in the previous section. As a result, the
+key detection error rate for using this model is compounded with the posture
 classification error rate as well. 
 
 An error in posture classification will lead to the choice of wrong spatial model,
 and hence adversely affect the key detection accuracy. To mitigate this problem, we
-adopt a conservative approach, and only use posture adapation when the confidence of
+adopt a conservative approach, and only use posture adaptation when the confidence of
 the classification result is high.
 
 The confidence of the classification is reflected by the pair of probability 
@@ -671,7 +673,7 @@ We can set a threshold $T_{\text{posture}}$ such that the input posture is class
 as $y$ only if $P_y \ge T_{\text{posture}}$ . Otherwise the posture is treated as
 unknown and we back-off to a lower order spatial model.
 
-There is also a trade-off in setting the threshold $T_{\text{posture}}$. The higer
+There is also a trade-off in setting the threshold $T_{\text{posture}}$. The higher
  $T_{\text{posture}}$ is, the fewer the number of errors there are in posture classification, but at the same time,
  the fewer the number of touch point postures will be classified. In other words, 
  more touch points will be classified as from unknown posture and no posture adaptation 
@@ -701,34 +703,34 @@ the greater the number of errors. Figure~\ref{fig:error-key} and \ref{fig:error-
 shows errors when using key adaptive model and posture and key adaptive model respectively.
 The most frequent mistake for both models are ``A'' and ``S'' confusion. Figure~\ref{fig:error-key-posture}
 and \ref{fig:error-posture-key} shows errors in one of the models but not in the other one.
-We can see that when using posture and key adaptive errors we also incurr errors
-that are not present when using key adatpve model alone. However the number of these
+We can see that when using posture and key adaptive errors we also incur errors
+that are not present when using key adaptive model alone. However the number of these
 errors are much smaller compared to the errors corrected.
 
 \begin{figure*}[tb]
-	\centering
-	\subfigure[Errors when using key adaptive model]{
+  \centering
+  \subfigure[Errors when using key adaptive model]{
     \includegraphics[width=0.49\columnwidth]{figures/sim-result-1.pdf}
     \label{fig:error-key}
-	} 
-	\subfigure[Errors when using posture and key adaptive model]{
+  } 
+  \subfigure[Errors when using posture and key adaptive model]{
     \includegraphics[width=0.49\columnwidth]{figures/sim-result-2.pdf}
     \label{fig:error-posture}
-	}
-	\subfigure[Errors when using key adaptive model but not when using posture and key
-	adaptive model]{
+  }
+  \subfigure[Errors when using key adaptive model but not when using posture and key
+  adaptive model]{
     \includegraphics[width=0.49\columnwidth]{figures/sim-result-1-2.pdf}
     \label{fig:error-key-posture}
-	}
-	\subfigure[ErrorS when using posture and key adaptive model but not when using key
+  }
+  \subfigure[ErrorS when using posture and key adaptive model but not when using key
   adaptive model]{
     \includegraphics[width=0.49\columnwidth]{figures/sim-result-2-1.pdf}
     \label{fig:error-posture-key}
-	}
-	\caption{Confusion matrices for different
-	spatial models from off-device key detection simulation. The row labels are the
-	target keys, and the column labels are the predicted keys.}
-	\label{fig:confusion-matrices}
+  }
+  \caption{Confusion matrices for different
+  spatial models from off-device key detection simulation. The row labels are the
+  target keys, and the column labels are the predicted keys.}
+  \label{fig:confusion-matrices}
 \end{figure*}
 
 Figure~\ref{fig:error-key-posture} also shows that the most number of
@@ -747,26 +749,27 @@ adpative model for the two-thumb input shifts to the left slightly, and this cha
 the classification of those boundary points to ``E'' correctly.
 
 \begin{figure}[tb]
- \includegraphics[width=1\columnwidth]{figures/key-posture-ellipse.png}
+  \centering
+  \includegraphics[width=1\columnwidth]{figures/key-posture-ellipse.png}
   \caption{Comparison of Gaussian distributions.}
   \label{fig:e-w-ellipses}
 \end{figure}
 
 \subsubsection{Individual Adaptation}
-For individal adaptive model, we set the minimum number of points needed to build the
+For individual adaptive model, we set the minimum number of points needed to build the
 Gaussian model for a particular key for a particular individual to be 50. This number is 
-aslo affected by the limited amount of data we have because there are not many keys that has 
+also affected by the limited amount of data we have because there are not many keys that has 
 the number of touch points be greater than 50. Unlike the analysis using cross-validation
 where we assume we know the target key perfectly, during online implementation, we can
 only make the best possible guess about the user's target key and use the touch point
 coordinates to update the Gaussian model for that particular key.
 
 For every touch point, we compute the probability for each key given the underlying spatial model.
-Then we use the $(x, y)$ coordinates of the touch point to upate the Gaussian model
-for the most probable key. Updating the Gaussain model involves computing the running
+Then we use the $(x, y)$ coordinates of the touch point to update the Gaussian model
+for the most probable key. Updating the Gaussian model involves computing the running
 average of the $x, y$ offsets from the center of the key and the covariance matrices. The counter 
 for the number of points used for a particular key Gaussian is maintained so that we
-know when a particular Gaussain model becomes valid, i.e. has enough data points.
+know when a particular Gaussian model becomes valid, i.e. has enough data points.
 
 When there is not enough data points, the system backs-off to a lower order model.
 Here we can have a choice of whether backing-off to the posture and key adaptive model or 
@@ -777,31 +780,31 @@ Table~\ref{tab:off-device} shows that there is also a slight more error reductio
 the posture and key adaptive model.
 
 Note that because the data set we have is from a between-user study, we cannot look
-at the effect of posture adaptation for each invidual, i.e., each indidual has two Gaussian models
+at the effect of posture adaptation for each individual, i.e., each individual has two Gaussian models
 for each posture and key combination.
 
 \subsection{On-device Simulation with Language Model}
 We also did a on-device simulation with language model auto-correction to see the
 the effect of posture adaptation. The language model is the most basic one which
 gives the same frequency for all the possible words in the dictionary. It does not
-correct substition, insertion or deletion errors either.
+correct substitution, insertion or deletion errors either.
 
 During the decoding process, the system computes the cost of each touch point to
 each key using the spatial model. The cost is the negative of the log probability of
 the touch point given a Gaussian model for a certain key.
 
 The metric we use is the mean word distance between the target phrase and the detected
-phrase after auto correction across the users. The word distance is calcualted using 
+phrase after auto correction across the users. The word distance is calculated using 
 edit distance at the word level. This means converting each phrase to a number coded
 string (same phrase has the same numeric code), and then the edit distance is computed
-between the two number strings. Substition, deletion and insertion all have the same
+between the two number strings. Substitution, deletion and insertion all have the same
 cost. The higher the score, the better the result.
 
-With key adapative model only, the final score is 80.078; and with posture and key
+With key adaptive model only, the final score is 80.078; and with posture and key
 adaptive model, the final score is 80.529. Table~\ref{tab:on-device} shows all the examples
 in the test users where the detected phrases are correct when using posture and key adaptive spatial model, but
-are wrong when using key adaptve only spatial model. We can see that in those examples,
-the posture and key adpative model can correctly detect the phrases because it
+are wrong when using key adaptive only spatial model. We can see that in those examples,
+the posture and key adaptive model can correctly detect the phrases because it
 correctly distinguish the neighboring keys between ``A'' and ``S'', ``S'' and ``D'',
 ``D'' and ``F'', ``F'' and ``G'', ``W'' and ``E''. 
 
@@ -847,13 +850,23 @@ using posture and
 This shows that how the posture adaptive spatial model can potentially be combined 
 with language model to give better auto correction result.
 
-
 \section{Discussion}
 The analysis and simulation results in the previous sections suggest that we
-can give higher prirority to user adaptation when we do not have enough data for
-the highest order model (the posture, user and key adaptive model). This
-suggests the following parital hierarchy and back-off paths. The result in the
+can give higher priority to individual adaptation when we do not have enough data for
+the highest order model (i.e., the posture, individual and key adaptive model). 
+If there are still not enough data for the individual and key adaptive model, we 
+can back-off to posture and key adaptive model. Figure~\ref{fig:partial-hierarchy} 
+shows a possible partial hierarchical model and back-off paths taking into consideration
+of the effectiveness of the adaptive models. The numbers indicate the order of the 
+sub-models to use during back-off. The result in the
 last row of Table~\ref{tab:off-device} is obtained using this spatial model.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\columnwidth]{figures/partial-hierarchy.pdf}
+  \caption{Partial hierarchical model implemented in our prototype.}
+  \label{fig:partial-hierarchy}
+\end{figure}
 
 \section{Conclusion}
 We have introduced and evaluated a novel hierarchical adaptive spatial model for
@@ -874,9 +887,9 @@ in our simulation.
 
 \section{Future Work}
 Touchscreen keyboard posture detection is a new topic and we believe there is still
-large room to improve the classfication accuracy. More features such as sensor data from 
+large room to improve the classification accuracy. More features such as sensor data from 
 the accelerometer and the gyroscope in the mobile device can be evaluated to see whether
-they can help with the classfication. Other input postures such as ten-finger input
+they can help with the classification. Other input postures such as ten-finger input
 on tablets can also be explored.
 
 More work can be done to investigate the touch points distribution pattern of bi-letters (digraphs) 
@@ -896,3 +909,4 @@ suggestions and help in  our data analysis and implementation of the prototype.
 \bibliographystyle{acm-sigchi}
 \bibliography{chi2013}
 \end{document}
+
