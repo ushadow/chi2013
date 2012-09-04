@@ -5,3 +5,6 @@ tmp/*
 *.gz
 *.bbl
 *.blg
+processed
+log
+raw

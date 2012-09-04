@@ -140,12 +140,15 @@ The intended key is ``E''. With a simple spatial
 model where each key has the same model, say a Gaussian model \cite{Goodman:2002} of 0 mean offsets, the points
 at the left side of the boundary would have a higher probability of targeting ``W''.
 With a model that adapts to postures and keys, however, those points will still have higher
-probability of targeting ``E''. This is because the Gaussian models for the ``W'' and ``E'' keys have left
-horizontal shifts from their corresponding centers for the two-thumb input posture. 
+probability of targeting ``E''. This is because the Gaussian models (presented
+by the blue 0.95 confidence ellipses in Figure~\ref{fig:e-w-ellipses-1}) for the ``W'' and
+``E'' keys have left horizontal shifts from their corresponding centers for the two-thumb input posture. 
 
 \begin{figure}[tb]
- \includegraphics[width=1\columnwidth]{figures/key-posture-ellipse.png}
-  \caption{Comparison of Gaussian distributions.}
+ \includegraphics[width=0.9\columnwidth]{figures/ellipses-two-thumb.pdf}
+  \caption{Gaussian distributions of the touch points from two-thumb input. The
+  blue ellipses represent the 0.95 confidence intervals of the Gaussian
+  distributions.}
   \label{fig:e-w-ellipses-1}
 \end{figure}
 
