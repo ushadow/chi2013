@@ -13,6 +13,22 @@ PlotPairedEllipses <- function(r1, r2, df, keyboard, key, predicted.key,
   PlotPointsEllipses(error.diff, ellipses.data, keybounds, file.name)
 }
 
+PlotErrorConfidenceThresh <- function(df, file.name) {
+  error.rate <- (1 - df$key_accuracy) * 100
+  yrange <- c(min(error.rate), max(error.rate, 8.708))
+  colors <- c('black', 'green', 'blue')
+  pdf(file.name)
+  plot(df$thresh, error.rate, type = 'b',
+       xlab = 'posture classification confidence threshold',
+       ylab = 'key detection error rate in %', ylim = yrange,
+       col = colors[1])
+  lines(df$thresh, rep(8.708, length(df$thresh)), col = colors[2])
+  lines(df$thresh, rep(8.641, length(df$thresh)), col = colors[3])
+  legend('bottomleft', c('error rate of posture & key adaptive model', 'error rate of key adaptive model',
+         'error rate of base model'), col = colors, lwd = 1, cex = 0.8)
+  dev.off()
+}
+
 WrongDetection <- function(df, key, predicted.key) {
   print(key)
   df[df$key != df$predicted_key & df$key == key &
