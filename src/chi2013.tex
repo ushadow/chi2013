@@ -850,11 +850,13 @@ correctly distinguish the neighboring keys between ``A'' and ``S'', ``S'' and ``
   \label{tab:on-device}
 \end{table*}
 
-There are also 4 cases there the detected phrases using key adaptive model is correct, but the ones
-using posture and 
+There are also a smaller number of cases where the detected phrases using key 
+adaptive model is correct, but the ones using posture and key adaptive model are
+wrong. These usually occur when the posture classification is wrong. 
 
-This shows that how the posture adaptive spatial model can potentially be combined 
-with language model to give better auto correction result.
+The result shows that the posture adaptive spatial model can potentially be combined 
+with language model to give better auto correction result even though posture
+classification may not be perfect.
 
 \section{Discussion}
 The analysis and simulation results in the previous sections suggest that we
@@ -911,7 +913,7 @@ suggestions and help in  our data analysis and implementation of the prototype.
 
 % If you want to use smaller typesetting for the reference list,
 % uncomment the following line:
-% \small
+\small
 \bibliographystyle{acm-sigchi}
 \bibliography{chi2013}
 \end{document}
