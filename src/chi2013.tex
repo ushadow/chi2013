@@ -348,7 +348,7 @@ different users.
     \hline
     Posture and key adaptive model & 7.058\% \\
     \hline
-    User and key adaptive model  & 6.845\% \\
+    Individual and key adaptive model  & 6.845\% \\
     \hline
   \end{tabular}
   \caption{Comparison of key detection accuracy (no language model) with
@@ -424,20 +424,21 @@ have enough data and a balanced number of postures in the training data.
 The key spatial model can also be more specialized to include bi-letters
 (also referred to as ``digraphs'' in \cite{Zhai:2000}) patterns that occur
 frequently, for instances, ``H'' followed by ``E'', ``T'' followed by ``H'' etc.
-Figure~\ref{} shows the $(x, y)$ coordinates of the tapping points for letter
-``E'' from the data set, and the 0.95 confidence ellipses of the Gaussian
-models for different adaptive models. The plot shows that when we combine data
-for all the posture together, the distribution of points for ``E'' after''H'' is
+Figure~\ref{fig:biletter} shows the 0.95 confidence ellipses of the Gaussian
+distributions of the touch points of key ``E'' for different adaptive models. The plot shows that when we combine data
+for all the posture together, the distribution of points for ``E'' after ``H'' is
 very slightly different from that of all ``E''. But if we look at ``E'' after
 ``H'' for one-finger input (cyan color), the difference is bigger. Another point 
 to note is that, since these are highly frequent patterns, even a small 
 improvement in detecting these keys based on these more specialized models may 
 give a bigger improvement in the overall key probability estimation accuracy.
 
-\begin{figure}
-
- \caption{Comparison of Gaussian models (0.95 confidence ellipses) for letter
-``E''.}
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{figures/biletter-he.pdf}
+  \caption{Comparison of Gaussian models (0.95 confidence ellipses) for letter
+    ``E''.}
+  \label{fig:biletter}
 \end{figure}
 
 Due to the scope of this paper, we do not analyze further about the
@@ -481,14 +482,13 @@ when we have high enough confidence about the posture classification (i.e., the
 back-off mechanism). The details of this is explained in a later section.
 
 \subsection{Individual Adaptation}
-The user and key adaptive model gives the lowest error rate compared to the
+The individual and key adaptive model gives the lowest error rate compared to the
 other models. The error reduction over key adaptive model is 14.68\%.
-This suggests that user and key adaptation can have higher priority in the hierarchy and during
-backoff. 
+This suggests that individual and key adaptation can have higher priority in the hierarchy. 
 
-In this analysis of user and key adaptation, for each fold, we use 90\% of the
+In this analysis of individual and key adaptation, for each fold, we use 90\% of the
 users to train the combined back-off key models. Then for each of the 10\% test users,
-50\% of the data for each key is used to train the user adaptive
+50\% of the data for each key is used to train the individual adaptive
 key models $N(\underline \mu_{u, k}, \Sigma_{u, k})$ where $u$ is from the set
 of test users.
 The accuracy of these data points are tested on the combined key models.
@@ -497,8 +497,6 @@ models together with the combined model for backup. The backup is used when
 there is not enough data for certain key (we used 10 data points) to build the 
 Gaussian model. 
 
-Enough data points are needed to build an accurate model for each key for each
-individual.
 Figure~\ref{fig:user-adapt} shows how key detection accuracy changes as the number of points used to build
 the personalized model for key 'E' increases. We choose key ``E'' as an
 example because it has the most number of data points (around 90) for each

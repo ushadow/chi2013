@@ -31,13 +31,13 @@ PlotEllipsesOneLetterAndBiletter <- function(df, pattern, keyboard,
   key2 <- substr(pattern, nchar, nchar)
   key1 <- substr(pattern, 1, 1)
   subset1 <- df[df$key == key2, ]
-  limits <- Limits(subset1)
+  limits <- list(xlim = c(30, 160), ylim = c(10, -90))
   subset2 <- subset1[subset1$inputing_finger == 'T', ]
 
   df <- na.omit(df)
   subset3 <- df[df[pattern] == 1, ]
-  if (length(unique(subset2$key)) > 1) {
-    print(unique(subset2$key))
+  if (length(unique(subset3$key)) > 1) {
+    print(unique(subset3$key))
     stop('More than one keys selected.')
   }
   subset4 <- subset3[subset3$inputing_finger == 'T', ]
@@ -67,7 +67,7 @@ RgbaColors <- function(colors, alpha) {
 }
 
 PlotEllipses <- function(df.list, limits, legends) {
-  SetPlotSize(limits$xlim, limits$ylim, 2)
+  SetPlotSize(limits$xlim, limits$ylim, 3)
 
   ncolors <- length(df.list)
   colors <- c('black', 'red', 'blue', 'cyan', 'orange', 'magenta')
@@ -80,9 +80,9 @@ PlotEllipses <- function(df.list, limits, legends) {
                 levels = c(0.95), col = rgb(rgb.colors[i, 1], rgb.colors[i, 2],
                 rgb.colors[i, 3], alpha = 1), plot.points = F, add = T)
   }
-  title(xlab = 'x coordinate relative to the top left of the keyboard')
-  title(ylab = 'y coordinate relative to the top left of the keyboard')
-  legend('bottomright', legends, col = colors, lwd = 1)
+  title(xlab = 'x coordinate relative to the top left of the keyboard',
+        ylab = 'y coordinate relative to the top left of the keyboard')
+  legend('bottomleft', legends, col = colors, lwd = 1, cex = 0.8)
 }
 
 Limits <- function(df) {
