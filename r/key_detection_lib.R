@@ -366,22 +366,17 @@ SplitKey <- function(df, split) {
 }
 
 EvalOneUser <- function(train, test, keyboard, combined.gaussians = NULL,
-    use.biletter = F, biletters = NULL) {
-  print("Personalized training set:")
-  ag <- aggregate(list(count = train$user_id), list(key = train$key),
-                  length)
-  print(ag)
+    use.biletter = F, biletters = NULL, verbose = F) {
+  if (verbose) {
+    print("Personalized training set:")
+    ag <- aggregate(list(count = train$user_id), list(key = train$key),
+                    length)
+    print(ag)
+  }
 
-  train.res <- EvalKeyDetection(NULL, train, keyboard, kMinGaussianDataPoints,
-      combined.gaussians, use.biletter, biletters, verbose = T)
-
-  test.res <- EvalKeyDetection(train, test, keyboard, kMinGaussianDataPoints,
-      combined.gaussians, use.biletter, biletters, verbose = T)
-  accuracy <- (train.res$accuracy * nrow(train) + test.res$accuracy * nrow(test)) /
-              (nrow(train) + nrow(test))
-  return (data.frame(user_id = test.res$user_id,
-                     inputing_finger = test.res$inputing_finger,
-                     accuracy = accuracy))
+  test.res <- EvalKeyDetection(train, test, keyboard, 10,
+      combined.gaussians, use.biletter, biletters, verbose = F)
+  return(EvalUserResult(test.res))
 }
 
 ComputeMetric <- function(key, x, y, keyboard, gaussians = NULL,
@@ -444,40 +439,5 @@ OneBiletterGaussian <- function(biletter, df) {
   Gaussian(subset)
 }
 
-AnalyzeWithinUser <- function(df, keyboard, key, plot.file) {
-  # Args:
-  #   df: Data frame of the whole data set.
-  df$ykeyboard <- -df$ykeyboard
-  keyboard$ycenter <- -keyboard$ycenter
-  df <- ComputeOffset(df, keyboard)
-  split.data <- SplitTrainTest(df, 0.5)
-  train <- split.data$train
-  test <- split.data$test
 
-  combined.gaussian <- KeyGaussians(train)
-  splits <- c(10, 20, 40, 70)
-  subset <- test[test$key == key, ]
-  users <- unique(test$user_id)
-  summary <- NULL
-  for (user in users) {
-    user1 <- subset[subset$user_id == user, ]
-    test1 <- user1[(max(splits) + 1) : nrow(user1), ]
-    for (split in splits) {
-      train1 <- user1[1 : split, ]
-      res <- EvalOneUser(train1, test1, keyboard, combined.gaussian)
-      if (is.null(summary)) {
-        summary <- cbind(split = split, res)
-      } else {
-        summary <- rbind(summary, cbind(split = split, res))
-      }
-    }
-  }
-  ag <- aggregate(list(accuracy = summary$accuracy),
-                  list(split = summary$split), mean)
-  png(plot.file)
-  xlab = sprintf('Number of points for individual adaptation for key %s', key)
-  plot(ag$split, ag$accuracy, type = 'b', xlab = xlab, ylab = 'accuracy')
-  dev.off()
-  return(ag)
-}
 
