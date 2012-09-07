@@ -1,5 +1,5 @@
 #TeXlipse project settings
-#Tue Aug 21 23:35:33 PDT 2012
+#Fri Sep 07 09:51:07 EDT 2012
 markTmpDer=true
 builderNum=2
 outputDir=pdf/
@@ -9,6 +9,6 @@ outputFormat=pdf
 tempDir=tmp
 mainTexFile=chi2013.tex
 outputFile=chi2013.pdf
-langSpell=
+langSpell=en
 markDer=true
 srcDir=src/
