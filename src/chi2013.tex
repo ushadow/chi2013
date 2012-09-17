@@ -56,7 +56,7 @@ breaklinks=true,
 % End of preamble. Here it comes the document.
 \begin{document}
 
-\title{Making Touchscreen Keyboards Adaptive to Letters Keys, Hand Postures,  and Individual Users - An Hierarchical Spatial Backoff Model Approach}
+\title{Making Touchscreen Keyboards Adaptive to Letter Keys, Hand Postures,  and Individual Users - An Hierarchical Spatial Backoff Model Approach}
 
 % Note that submissions are blind, so author information should be omitted
 \numberofauthors{3}
@@ -143,7 +143,7 @@ To address these challenges, we propose and explore a hierarchical backoff appro
 \end{enumerate}
 We call keyboard built in such an approach SBM (spatial backoff models) keyboard. The SBM approach also raises many questions and challenges which will be addressed in the rest of the paper. Here we give a brief outline to these problems and their solutions.
 
-First, while the observations made in~\cite{Azenkot:2012} is quite unambiguous about key location, hand posture, and individual being reasonable adaptive factors, they need further investigation.  We report one analysis on the relative key detection power of various spatial models specific to the combinatorial factors of key, hand posture,  and individual in section ``Comparison of Spatial Models’’.
+First, while the observations made in~\cite{Azenkot:2012} is quite unambiguous about key location, hand posture, and individual being reasonable adaptive factors, they need further investigation.  We report one analysis on the relative key detection power of various spatial models specific to the combinatorial factors of key, hand posture,  and individual in section ``Comparison of Spatial Model’’.
 
 Second, in section ``Input Hand Posture Classification’’ we present a detailed SVM-based classifier of hand postures that returns mode identification of two-thumb or one-finger (including one-thumb) posture from users’ touch points while entering text.
 
@@ -211,7 +211,7 @@ intended key is known. In the real world application, the keys users intend to h
 The key and individual adaptive methods mentioned earlier all assume that users' input posture
 remain the same. We observe that the same individual may change hand posture even on the same device. Building on the observations made by Azenkot and Zhai [1], we investigate how posture adaptation can be implemented and how it can actually affect key probability estimation accuracy.
 
-The idea of backoff to a lower order model when a higher order more specific model is not available is commonly used in language modelling for speech recognition~\cite{Zitouni:2007}. When unseen \textit{n}-gram events are encountered, the backoff class based \text{n}-gram language model is used.
+The idea of backoff to a lower order model when a higher order more specific model is not available is commonly used in language modelling for speech recognition~\cite{Zitouni:2007}. For example, when unseen \textit{n}-gram events are encountered, the backoff class based \textit{n}-gram language model is used.
 
 Finally, various researchers have explored other dimensions to improve the overall
 text input experience on touchscreen keyboard. One dimension is using hardware
@@ -407,17 +407,17 @@ Our method of hand-posture classification is based on Fitts’ law which states 
 \begin{align}
 T = a + b\log_2(1 + \frac{D}{W})
 \end{align}                                                  
-The insight here is that we expect the one-finger input posture follows this law,  but two-thumbs input may not. For example, when the user types “al”, it takes longer time to type using one finger because the distance the one finger has to travel from A key to L key on Qwerty is large. With two thumbs, typing “al” can be faster because the touch action switches from left thumb to type “A” to the right thumb to type “L”, no long distance travel is required.
+We expect one-finger input posture follows this law,  but two-thumb input may not. For example, a user may take a longer time to type the letters AL using one finger because the finger has to travel a longer distance from key A to key L on a Qwerty keyboard. With two thumbs, typing AL can be faster because the touch action switches from left thumb to type A to the right thumb to type L, and no long distance travel is required.
 
 \begin{figure}[tb]
   \centering
   \includegraphics[width=0.9\columnwidth]{figures/time-distance.png}
-  \caption{Tapping points data from input on a Nexus S phone.}
+  \caption{Touch points data from input on a Nexus S phone.}
   \label{fig:time-distance}
 \end{figure}
 
 Figure. \ref{fig:time-distance} shows the relationship between the time elapsed 
-and the log square distance travelled between consecutive key presses. We can
+and the log square distance travelled between consecutive key taps. We can
 see that for the one-finger input (blue and red points), the time taken
 increases with distance whereas for the two-thumb input, there is no obvious
 trend. The difference is more significant when the log square distance (natural
@@ -431,7 +431,7 @@ by dividing the time elapsed by the average time elapsed for the last 10 key
 presses.
 
 Using 20 users’ data for training and 10 users’ data for testing, we train a SVM classifier offline with these 3 features for touch points that satisfy condition $C$: it is 
-on the different side of the keyboard from its previous touch point and the log square distance from the previous touch point is at least 10px. This classifier gives a probability score $p_y^{\text{single}}$ for these touch points. Note that $\displaystyle\sum_{y \in \mathcal{Y}}p_y^{\text{single}} = 1$. The posture classification accuracy for these touch points is 83.559\%.
+on the different side of the keyboard from its previous touch point and the log square distance from the previous touch point is at least 10px. This classifier gives a probability score $p_y^{\text{single}}$ for these touch points. Note that $\displaystyle\sum_{y \in \mathcal{Y}}p_y^{\text{single}} = 1$. The posture classification accuracy for these touch points is 83.6\%.
  
 In order to classify every key tap and assuming the user does not change posture 
 rapidly, we look at a sliding time window of 10 touch points (about 2 words). For 
@@ -456,7 +456,7 @@ The sliding time window classifier gives a final probability score $p_y$ for pos
 $y$ for each touch point. Again $\displaystyle\sum_{y\in \mathcal{Y}}p_y = 1$. To evaluate the classification accuracy, we set the the
 classified posture to be $y$ if $p_y > 0.5$. With this, the overall classification 
 accuracy for each touch point with a sliding time window
-is 86.401\% (23128 out of 26769 touch points).
+is 86.4\% (23128 out of 26769 touch points).
 
 Because of the sliding window approach, the posture for the first few touch points  
 for each new session is unknown. In this case, the system backed off to a lower order spatial 
