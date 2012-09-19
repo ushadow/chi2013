@@ -154,7 +154,7 @@ Third, using the posture classification method and user adaptation, does higher 
 As smartphone keyboard become more sophisticated, and given the relatively complex solutions proposed that involve multiple components, multiple phases, and learning,  we fear the traditional lab experiments based HCI evaluation method may not be efficient or sensitive enough for researchers to make rapid progress. In this paper we use a combination of HCI and ML (machine learning) evaluation methods, along with algorithm and system development. 
 
 We first select a smartphone typing dataset as the empirical basis of training and cross-validation. The experiment that generated the dataset had been peer reviewed and published. Briefly, the experiment involved 32 participants who were given random phrases to type on a “data collector” keyboard run on a Android touchscreen phone.  The participants were encouraged to type as naturally as possible and not to correct any errors. The goal was to collect user’s touch patterns by their natural instinct with as little concern to technology constraint as possible. The experiment was between-subject in which each participant used one hand posture to type. For consistency, we removed the data from 2 left-handed users in our analysis, and are left with data from 9 users using one-index-finger input, 11 users using one-thumb input and
-10 users using two-thumb input.  Since we found much less difference between the index finger condition and the single thumb condition and due to mode classification reliability concerns, we combine the index-finger input and one-thumb input together as one-finger condition. We also filtered out touch points that are 1.5 times the height of the key away from the center of the target key. After this, there are 84292 total touch points. For all evaluations, the ratio of the number of users using one-finger input to that using two-thumb input is kept the same for the training and testing data sets. 
+10 users using two-thumb input.  Since we found much less difference between the index finger condition and the single thumb condition and due to posture classification classification reliability concerns, we combine the index-finger input and one-thumb input together as one-finger condition. Hence the posture class random variable $y$ can take values in the set $\mathcal{Y} = \{\text{one-finger}, \text{two-thumb}\}$. We also filtered out touch points that are 1.5 times the height of the key away from the center of the target key. After this, there are 84292 total touch points. For all evaluations, the ratio of the number of users using one-finger input to that using two-thumb input is kept the same for the training and testing data sets. 
 
 A basic dependent variable (measure) of the dataset and any models built from it is “character error rate”. This is measured by the difference between the character in the target phrase and character determined from the touch point via a spatial model. Note although this rate can be viewed as a percentage of the total number of characters in the target phrase, it is to be interpreted with precaution. First, 0\% error rate may never be achievable given how the dataset was achieved. Second the absolute error rate maybe dataset dependent and is not necessarily what a user would experience in practice, but the comparative error rates across conditions are informative of the qualities of different models.
 
@@ -221,19 +221,18 @@ These dimensions are orthogonal to the language and the spatial models, and can 
 combined together to further increase the input accuracy and speed.
 
 \section{Hierarchical Spatial Backoff Models (SBM)}
-The hierarchical adaptive SBM consists of a number of submodels in different “orders” (Figure. \ref{fig:hierarchy}). Each sub-model is represented by a bivariate Gaussian distribution $N(\underline\mu, \Sigma)$
-where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
-each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix  
-\cite{Azenkot:2012, Goodman:2002, Rashid:2008}.
+The hierarchical adaptive SBM consists a number of submodels in different “orders” (Figure. \ref{fig:hierarchy}). Each submodel is represented by a bivariate Gaussian distribution~\cite{Azenkot:2012, Goodman:2002, Rashid:2008}.
 The zeroth order is the base model which is key, individual, and posture
-independent. This is the most general model combining all data together. The
+independent, i.e. all the keys as the same Gaussian distribution $N(\underline\mu, \Sigma)$
+where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
+each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix. This is the most general model combining all data together. The
 higher order submodels adapt to a combination of 
-key positions, hand postures (e.g. one-finger or two-thumb), and individual users. 
+key positions, hand postures (e.g. one-finger or two-thumb), and individual users. For example, the ``posture adaptive’’ model, adapts to input posture only which means there is one Gaussian model $N(\underline\mu_y, \Sigma_y)$ for each posture $y$ for \textit{all} keys. The ``posture \& key adaptive’’ model adapts to both posture and key which means there is one Gaussian model $N(\underline\mu_{y, k}, \Sigma_{y, k})$ for each posture $y$ and key $k$ combination.  The highest order model has one Gaussian model $N(\underline\mu_{y,u,k}, \Sigma_{y,u,k})$ for each posture $y$, user $u$ and key $k$ combination.
 
 \begin{figure}[tb]
   \centering
   \includegraphics[width=0.9\columnwidth]{figures/hierarchy.pdf}
-  \caption{A complete hierarchical spatial backoff model.}
+  \caption{A complete hierarchical spatial backoff model. For practical purposes, not all the submodels need to be included. The models with thicker lines are the ones we analyzed and included in the prototype implementation.}
   \label{fig:hierarchy}
 \end{figure}
 
@@ -241,12 +240,12 @@ Each combination of the factors needs sufficient number of samples to build a re
 threshold. Otherwise a lower order model (backoff) will be used instead.
 
 Figure~\ref{fig:hierarchy} shows a \textit{complete} hierarchy of the submodels with all
-possible combinations of the three adaptive factors. The ``posture adaptive’’ model, for example, adapts to input posture only which means there is one Gaussian model $N(\underline\mu_y, \Sigma_y)$ for each posture $y$ for all keys. The ``posture & key adaptive’’ model adapts to both posture and key which means there is one Gaussian model $N(\underline\mu_{y, k}, \Sigma_{y, k})$ for each posture $y$ and key $key$ combination. However, depending on the
-relative effectiveness of the sub-models, it is not necessary to include all of
+possible combinations of the three adaptive factors. However, depending on the
+relative effectiveness of the submodels, it is not necessary to include all of
 them in the implementation. In this paper, we focus on analyzing the key
 adaptive model, posture and key adaptive model and user and key adaptive model.
 The order of the
-back-off process, and the priority of the models at the same level to use can
+backoff process, and the priority of the models at the same level to use can
 also be design choices, but the analysis in the next section gives
 guidance and suggestion on how to determine the order.
 
@@ -262,23 +261,23 @@ different users.
   \begin{tabular}{|l|c|}
     \hline
     \tabhead{Spatial model} &
-    \multicolumn{1}{|p{0.2\columnwidth}|}{\centering\tabhead{Key detection
+    \multicolumn{1}{|p{0.2\columnwidth}|}{\centering\tabhead{Key estimation
     error rate}} \\
     \hline
     Distance from the center of the keys & 7.976\% \\
     \hline
-    \multicolumn{1}{|p{0.7\columnwidth}|}{Base model (same Gaussian model for
+    \multicolumn{1}{|p{0.7\columnwidth}|}{Base model (same Gaussian model $N(\underline 0, \Sigma)$ for
     all the keys with a full covariance matrix)} & 7.853\% \\
     \hline
-    Key adaptive model  & 8.023\% \\
+    \multicolumn{1}{|p{0.7\columnwidth}|}{Key adaptive model, $N(\underline \mu_k, \Sigma_k)$} & 8.023\% \\
     \hline
-    Posture and key adaptive model & 7.058\% \\
+    \multicolumn{1}{|p{0.7\columnwidth}|}{Posture \& key adaptive model (with observed posture), $N(\underline \mu_{y,k}, \Sigma_{y,k})$} & 7.058\% \\
     \hline
-    Individual and key adaptive model  & 6.845\% \\
+     \multicolumn{1}{|p{0.7\columnwidth}|}{Individual \& key adaptive model (with observed intended key for training models), $N(\underline \mu_{u,k}, \Sigma_{u,k})$} & 6.845\% \\
     \hline
   \end{tabular}
-  \caption{Comparison of key detection accuracy (no language model) with
-  different spatial models using 10-fold cross validation.}
+  \caption{Comparison of key estimation error (no language model) with
+  different spatial models using 10-fold cross validation. These results represent the theoretical upper bounds for the different adaptive spatial models based on our dataset since they assume \textit{observed} postures and intended keys for building the model.}
   \label{tab:comparison}
 \end{table}
 
@@ -396,11 +395,7 @@ there are not enough data points, a back-off model like the posture and key adap
 
 \section{Input Hand Posture Classification}\label{sec:posture-classification}
 The hierarchical adaptive SBM needs real time classification of the user’s hand postures. A variety of sensors, signals and algorithms can be used in the future to achieve such a function. We developed an online binary hand-posture classifier 
-that constantly returns an estimate of the user's current posture (two-thumb or one-finger input) from the user’s text input touch points without additional sensors. 
-
-Let $\mathcal{Y} = \{\text{one-finger}, \text{two-thumb}\}$ be the set of posture
-class labels. We describe in detail the classification function that maps input from the
-touch points to $\mathcal{Y}$.
+that constantly returns an estimate of the user's current posture  $y \in \mathcal{Y} = \{\text{two-thumb, one-finger}\}$ from the user’s text input touch points without additional sensors. 
 
 Our method of hand-posture classification is based on Fitts’ law which states that the time (T) required to move to a target is a function of the distance (D) to the target and the size (W) of the target (Equation 1).
 \begin{align}
