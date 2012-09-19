@@ -124,32 +124,31 @@ In comparison to ten-finger blind typing on a large touch surface, the individua
 
 \item Touch patterns can also be dependent on letter keys. For example for one finger typing users touch points tend to shift downward on the bottom letter row of a touchscreen keyboard, but not the top row. 
 
-\item Users’ touch points tend to spread wider on a collective basis (polling or accommodating all users data together) than on an individual basis.
+\item Users’ touch points tend to spread wider on a collective basis (polling all users data together) than on an individual basis. This shows that different users tend to have different touch point distributions, but within the same user, the touch point pattern using the same posture may be more consistent.
 \end{enumerate}
 
 Together these findings make a strong case and call for personalization of smartphone touch keyboard algorithms. However they also illustrate the challenge and complexity of personalization. Future advanced keyboards may need to adapt to individual differences as one factor,  but it is insufficient or even invalid if the keyboard algorithms do not also adapt to other adaptive factors, such as hand postures and keys (or regions). In other words, strong and effective adaptation may need to  take a combinatorial approach to be key, posture, and user specific. 
 
-A combinatorial approach raises challenging implementation issues. First, there need to be a large number, such as 26 keys $\times$ 3 postures = 78, of submodels for each individual user. Collecting sufficient amount of data to build each submodel may take too long a time to be practically useful, especially for infrequent letters, such as Z and X. Second, if an STK does have a large number of (sub)models, model selection can be a significant challenge.  Since each submodel is specific to a combination of factors, a wrong selection may actually hurt the keyboard’s quality. Correct model selection requires an accurate identification of the current mode i.e. a combination of adaptive factors . While it is relatively easy to identify the individual (by for example device login) and letter key, it is not so easy to identify what hand posture the user is applying to each tap. 
+A combinatorial approach raises challenging implementation issues. First, there need to be a large number, such as 26 keys $\times$ 3 postures = 78, of submodels for each individual user. Collecting sufficient amount of data to build each submodel may take too long a time to be practically useful, especially for infrequent letters, such as Z and X. Second, if an STK does have a large number of (sub)models, model selection can be a significant challenge.  Since each submodel is specific to a combination of factors, a wrong selection may actually hurt the keyboard’s quality. Correct model selection requires an accurate identification of the current \textit{mode}, i.e. a combination of adaptive factors. While it is relatively easy to identify the individual (by for example device login) and letter key, it is not so easy to identify what hand posture the user is applying to each tap. 
 
-To address these challenges, we propose and explore a hierarchical backoff approach to building adaptive STK spatial models. The models in the hierarchy range from generic (e.g. a base model that is user, key, and posture invariant) to specific (e.g. a spatial model for the letter W when tapped with the right index finger by the current user). Adaptive keyboards developed in such an approach, when put in use by an individual user, first start with the base model. A hierarchy of models, while other more specific models are dormant. Each touch input point is used for input decoding and contributes to building one or more submodels the touch point belongs. When a submodel “matures”, i.e. a sufficient amount of data is available to train it, it becomes active. A mature model will continue to renew itself with new user data to accommodate  slow and long term change of user behavior. When multiple submodels are active, the system first identifies the current input mode and then applies a more specific model if its corresponding model has matured and if such a mode is classified with high confidence. If either of the conditions is not met, the system backs-off to a more general model or the base model. This hierarchical back-off may offer the following advantages to the adaptation in a STK:
+To address these challenges, we propose and explore a hierarchical backoff approach to building adaptive STK spatial models. The models in the hierarchy range from generic (e.g. a base model that is user, key, and posture invariant) to specific (e.g. a model that has specialized parameters for each user, key, and posture combination). When a user first starts typing on an hierarchical adaptive keyboard, it initially defaults to the base model while other more specific models are dormant. Each touch input point is used for input decoding and contributes to building one or more submodels the touch point belongs. When a submodel \textit{matures}, i.e. a sufficient amount of data is available to train it, it becomes active. Determining the threshold of the minimum amount of data required is an essential part of the backoff model and we will discuss our findings later in the paper.
+A \textit{mature} model will continue to renew itself with new user data to accommodate  slow and long term change of user behavior. When multiple submodels are active, the system first identifies the current input mode and then applies a more specific model if its corresponding model has matured and if such a mode is classified with high confidence. If either of the conditions is not met, the system \textit{backs-off} to a more general model or the base model. This hierarchical backoff may offer the following advantages to the adaptation in a STK:
 \begin{enumerate}
-\item It (potentially) does combinatorial and fine grained adaptation, not only to the individual user as a lumped-together entity, but also in combination with hand posture and key location factors. It is therefore more practical and less brittle since it does not assume one user would always use the same hand posture in all situations.
+\item It does combinatorial and fine grained adaptation, not only to the individual user as a lumped-together entity, but also in combination with hand posture and key location factors. It is therefore more practical and less brittle since it does not assume one user would always use the same hand posture in all situations.
 
-\item It is conservative. Adaptation is only applied if and only if the more specialized mode is confidently detected and when its corresponding submodel is mature. It is biased towards the standard base model. In the worst case it is not different from or worse than the standard model. It therefore minimizes the risk of over adaptation and transitional instability when the user changes hand posture. 
+\item It is conservative. Posture adaptation is applied on if it is confidently detected, and when its corresponding submodel is \textit{mature}. It is biased towards the standard base model. In the worst case it is not different from or worse than the standard model, and therefore it minimizes the risk of over adaptation and transitional instability when the user changes hand posture. 
  
 \item The system does not require a separate training (data collection) phase for each individual. It is more practical to launch such an adaptive system.
 
 \item The system continually updates and renewal itself, so it can accommodate long term user behavior change. 
 \end{enumerate}
-We call keyboard built in such an approach SBM (spatial backoff models) keyboard. The SBM approach also raises many questions and challenges which will be addressed in the rest of the paper. Here we give a brief outline to these problems and their solutions.
+We call keyboards built in such an approach SBM (spatial backoff models) keyboards. The SBM approach also raises many questions and challenges which will be addressed in the rest of the paper. Here we give a brief outline to these problems and their solutions.
 
-First, while the observations made in~\cite{Azenkot:2012} is quite unambiguous about key location, hand posture, and individual being reasonable adaptive factors, they need further investigation.  We report one analysis on the relative key detection power of various spatial models specific to the combinatorial factors of key, hand posture,  and individual in section ``Comparison of Spatial Model’’.
+First, while the observations made in~\cite{Azenkot:2012} is quite unambiguous about key location, hand posture, and individual being reasonable adaptive factors, they need further investigation.  We report one analysis on the relative key detection power of various spatial models specific to the combinatorial factors of key, hand posture,  and individual in section ``Comparison of Spatial Model’’. The analysis is based on \textit{observed} posture and user intended key. With our dataset it was found that posture and key specific spatial models could reduce character error rate by about 12.0\% compared to the key specific model only; and user and key specific spatial models could reduce character error rate by about 14.7\% compared to the key specific model. These reduction in error rates represent theoretical upper bounds based on our dataset. 
 
 Second, in section ``Input Hand Posture Classification’’ we present a detailed SVM-based classifier of hand postures that returns mode identification of two-thumb or one-finger (including one-thumb) posture from users’ touch points while entering text.
 
-Third, using the posture classification method and user adaptation, does higher order specific models really offer better error corrections than a lower order or base model without language model (as a baseline)? We address this question in the ``Evaluation of Standalone SBM” section. With our dataset it was found that posture specific spatial models could reduce character error rate by about 12.0\%; and user specific spatial models could reduce character error rate by about 14.7\%. The combination of the two could potentially give further improvement. 
-
-Fourth, SBM is a rather complex approach involving multiple phases and components. A modern smartphone keyboard involves even more components such as a language model, a decoder, an event handling system and graphical user interfaces.  Can a SBM system really work when all of these are put together? Would any other components and functions of an entire system (e.g. a language model) washoff or even counteract with SBM adaptation? Is SBM keyboard technically feasible as a real-time interactive system? To address these questions, we have built a working SBM keyboard prototype by implementing the proposed hierarchical backoff models in a research keyboard called Delight. Delight is a working system that runs on Android OS and has a built-in language model and all essential functions of a modern commercial level smartphone keyboard. Its detail is beyond the scope of this paper.
+Third, using the posture classification method and user adaptation, does higher order specific models really offer better error corrections than a lower order or base model without language model (as a baseline)? We address this question in the ``Evaluation of Standalone SBM” section. With \textit{inferred} posture and user intended key, the posture, individual and key adaptive spatial model could reduce the character error rate by about 13.9\% compared to the key adaptive model.
 
 \section{Research Methods}
 As smartphone keyboard become more sophisticated, and given the relatively complex solutions proposed that involve multiple components, multiple phases, and learning,  we fear the traditional lab experiments based HCI evaluation method may not be efficient or sensitive enough for researchers to make rapid progress. In this paper we use a combination of HCI and ML (machine learning) evaluation methods, along with algorithm and system development. 
@@ -206,12 +205,12 @@ spatial model only and using the training data from all the users combined
 gives an error reduction of 18.9\% over no key-target resizing. When using personalized
 key-target resizing, there is a further 2.84\% error reduction.
 Their results show the benefit of individual adaptation in an ideal condition where the 
-intended key is known. In the real world application, the keys users intend to hit are unknown and can only be inferred based on the current spatial and language models. In our prototype implementation, we build the user adaptive spatial model for each key dynamically as the user types. 
+intended key is known. In the real world application, the keys users intend to hit are unknown and can only be inferred based on the current spatial and language models. In our prototype implementation and evaluation we impose the same real-world limitation. We build the user adaptive spatial model for each key probabilistically as the user types, without relying on the hidden information about which key the user actually intended to type. 
 
 The key and individual adaptive methods mentioned earlier all assume that users' input posture
 remain the same. We observe that the same individual may change hand posture even on the same device. Building on the observations made by Azenkot and Zhai [1], we investigate how posture adaptation can be implemented and how it can actually affect key probability estimation accuracy.
 
-The idea of backoff to a lower order model when a higher order more specific model is not available is commonly used in language modelling for speech recognition~\cite{Zitouni:2007}. For example, when unseen \textit{n}-gram events are encountered, the backoff class based \textit{n}-gram language model is used.
+The idea of backoff to a lower order model when a higher order more specific model is not available is commonly used in language modelling (LM) for speech recognition~\cite{Katz:1987, Zitouni:2007}. For example, when unseen \textit{n}-gram events are encountered, the backoff class based \textit{n}-gram language model is used.  In LM,  all context is observed including backoffs. However in our model some of the variables are observed, e.g. user (assuming only one user uses a particular phone), whereas some are hidden and need to be inferred, e.g. posture. As a result, the backoff conditions are more complicated in our model.
 
 Finally, various researchers have explored other dimensions to improve the overall
 text input experience on touchscreen keyboard. One dimension is using hardware
@@ -222,27 +221,27 @@ These dimensions are orthogonal to the language and the spatial models, and can 
 combined together to further increase the input accuracy and speed.
 
 \section{Hierarchical Spatial Backoff Models (SBM)}
-The hierarchical adaptive SBM consists of a number of sub-models in different “orders” (Figure. \ref{fig:hierarchy}). Each sub-model is represented by a bivariate Gaussian distribution $N(\underline\mu, \Sigma)$
+The hierarchical adaptive SBM consists of a number of submodels in different “orders” (Figure. \ref{fig:hierarchy}). Each sub-model is represented by a bivariate Gaussian distribution $N(\underline\mu, \Sigma)$
 where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
 each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix  
 \cite{Azenkot:2012, Goodman:2002, Rashid:2008}.
 The zeroth order is the base model which is key, individual, and posture
 independent. This is the most general model combining all data together. The
-higher order sub-models adapt to a combination of 
+higher order submodels adapt to a combination of 
 key positions, hand postures (e.g. one-finger or two-thumb), and individual users. 
 
 \begin{figure}[tb]
   \centering
   \includegraphics[width=0.9\columnwidth]{figures/hierarchy.pdf}
-  \caption{Hierarchical spatial backoff model}
+  \caption{A complete hierarchical spatial backoff model.}
   \label{fig:hierarchy}
 \end{figure}
 
-Each combination of the factors needs sufficient number of samples to build a reliable model. Hence, each sub-model would only become active when its reliability passes a set 
-threshold. Otherwise a lower order model (back-off) will be used instead.
+Each combination of the factors needs sufficient number of samples to build a reliable model. Hence, each submodel would only become \textit{mature} (active) when its reliability passes a set 
+threshold. Otherwise a lower order model (backoff) will be used instead.
 
-Figure~\ref{fig:hierarchy} shows a complete hierarchy of the sub-models with all
-possible combinations of the three adaptive factors. However, depending on the
+Figure~\ref{fig:hierarchy} shows a \textit{complete} hierarchy of the submodels with all
+possible combinations of the three adaptive factors. The ``posture adaptive’’ model, for example, adapts to input posture only which means there is one Gaussian model $N(\underline\mu_y, \Sigma_y)$ for each posture $y$ for all keys. The ``posture & key adaptive’’ model adapts to both posture and key which means there is one Gaussian model $N(\underline\mu_{y, k}, \Sigma_{y, k})$ for each posture $y$ and key $key$ combination. However, depending on the
 relative effectiveness of the sub-models, it is not necessary to include all of
 them in the implementation. In this paper, we focus on analyzing the key
 adaptive model, posture and key adaptive model and user and key adaptive model.
@@ -492,7 +491,7 @@ query propagates until a Gaussian sub-model is found.
   \label{fig:chain-of-responsibility}
 \end{figure}
 
-Based on this design, we implemented a prototype of SBM with the online posture classification in C++. The prototype SBM has flags to turn on/off curtain adaptive models so that we can easily compare the effectiveness of submodels with different combinations of adaptive factors. For all the evaluations, we use 20 users' data for training both the posture classifier and the spatial models, and test on the other 10 users' data. 
+Based on this design, we implemented a prototype of SBM with the online posture classification in C++. The prototype SBM has flags to turn on/off certain adaptive models so that we can easily compare the effectiveness of submodels with different combinations of adaptive factors. For all the evaluations, we use 20 users' data for training both the posture classifier and the spatial models, and test on the other 10 users' data. 
 
 \subsection{Evaluation of Standalone SBM}
 First, like \cite{Findlater:2012, Rudchenko:2011}, we evaluate the effectiveness of the standalone SBM  prototype on key estimation without a language model. 
@@ -624,72 +623,6 @@ the posture and key adaptive model.
 Note that because the data set we have is from a between-user study, we cannot look
 at the effect of posture adaptation for each individual, i.e., each individual has two Gaussian models
 for each posture and key combination.
-
-\subsection{Keyboard Integration: Delight-SBM}
-To demonstrate the feasibility of the hierarchical SBM in a real system, we integrate the prototype with the Delight research keyboard, and call it Delight-SBM. 
-Delight-SBM runs on Android devices in real-time. Its input decoding process combines SBM with a language model. During the decoding process, given a sequence
-of touch points $\underline c_1\ldots\underline c_n$, Delight-SBM computes 
-the probability of each touch point to
-each key in a candidate word using the SBM.
-The probabilities are then combined with the word probability based on the 
-language model to give the final probability of the intended word.
-
-To observe the interaction between SBM and a language model, we put Delight-SBM to an on-device test. As a preliminary evaluation, we compare SBM with the posture and key adaptation as the highest order model and the one with key adaptation as the highest level to isolate the effect of posture adaptation. We fed Delight-SBM with the touch data in real-time (at the same time intervals the touch data were recorded) through Android’s Monkey event emulation tool. To establish a baseline, we choose the most basic language model first such that all the words in the dictionary have the same probability. It does not correct substitution, insertion or deletion errors either. 
-
-The metric we use for evaluation is the mean word error rate between target phrases and detected phrases after auto correction. The word accuracy score is based on minimum
-word distance (MWD) error rate which is the smallest number of word deletions, insertions, or replacements needed to transform
-from the target phrase into the detected phrase divided by the maximum of the 
-lengths of the two phrases. Again, the absolute MWD error rate is not necessarily what a user would experience in practice, but the comparative MWD error rates across conditions are informative of the keyboard’s quality.
-
-With key adaptive model only, the error rate is 19.922\%; and with posture and key
-adaptive model, the error rate is 19.471\%, a reduction of 2.3\%. Table~\ref{tab:on-device} shows some examples
-in the test users where the detected phrases are correct when using posture and key adaptive spatial model, but
-are wrong when using key adaptive only spatial model. We can see that in those examples,
-the posture and key adaptive model can correctly detect the phrases because it
-correctly distinguish the neighboring keys between A and S, S and D,
-D and F, F and G, W and E. There are also a smaller number of cases where the detected phrases using key 
-adaptive model is correct, but the ones using posture and key adaptive model are
-wrong. These usually occur when the posture classification is wrong. 
-
-\begin{table*}[tb]
-  \centering
-  \begin{tabularx}{0.925\textwidth}{|l|l|l|l|}
-  \hline
-  \tabhead{Input posture} & \tabhead{Target phrase} & \tabhead{Detected phrase with key adaptive model} 
-  & \multicolumn{1}{|p{0.526\columnwidth}|}{\tabhead{Detected phrase with posture and key adaptive model}}\\
-  \hline
-  two-thumb & the dreamers of dreams & the \textcolor{red}{dream era} of dreams & the dreamers of dreams  \\
-  \hline
-  two-thumb & handicapped persons & \textcolor{red}{handicap pes} persons & handicapped persons \\
-  \hline
-  two-thumb & she wears too much makeup & \textcolor{red}{a he} wears too much makeup & she wears too much makeup \\
-  \hline
-  one-finger & my bare face in the wind & my bare face in the \textcolor{red}{wins} & my bare face in the wind \\ 
-  \hline
-  two-thumb & a lie makes the nose grow & a lie \textcolor{red}{ma kea} the nose grow & a lie makes the nose grow \\
-  \hline 
-  two-thumb & the bathroom is clean & the bathroom is \textcolor{red}{cl wan} & the bathroom is clean \\
-  \hline 
-  two-thumb & travel at light speed & travel at light \textcolor{red}{a peed} & travel at light speed \\ 
-  \hline
-  two-thumb & traveling requires fuel & \textcolor{red}{travel inf require a} fuel & traveling requires fuel \\
-  \hline 
-  two-thumb & most golfers love the game & most \textcolor{red}{gold ers} love the game & most golfers love the game \\ 
-  \hline
-  two-thumb & win first prize & win \textcolor{red}{dir st} prize & win first prize \\ 
-  \hline
-  two-thumb & if at first you fail & if at \textcolor{red}{dir st} you fail & if at first you fail \\ 
-  \hline
-  \end{tabularx}
-  \caption{Examples of on-device simulation where the detected phrase is correct
-  with posture and key adaptive spatial model and incorrect with key adaptive spatial
-  model.}
-  \label{tab:on-device}
-\end{table*}
-
-The result shows that the posture adaptive spatial model can potentially be combined 
-with language model to give better auto correction result even though posture
-classification may not be perfect. 
 
 \section{Discussion}
 The results based on our dataset suggest that we
