@@ -4,14 +4,6 @@
 # License:: All Rights Reserved.
 # Original Author:: Ying Yin (mailto:yingyin@google.com)
 #
-# Summary description of library or script.
-#
-# This doc string should contain an overall description of the module/script
-# and can optionally briefly describe exported classes and functions.
-#
-#    ClassFoo:      One line summary.
-#    function_foo:  One line summary.
-
 # A class that represents a keyboard.
 require 'set'
 
@@ -40,7 +32,7 @@ class Keyboard
 
   # Initializes keyboard layout from input stream.
   #
-  # @param [IO] Input stream that contains keyboard layout in text.
+  # @param [IO] Input stream that contains keyboard layout in csv format.
   def initialize(io)
     @keys = {}
     io.each do |line|

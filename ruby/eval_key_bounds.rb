@@ -4,14 +4,7 @@
 # License:: All Rights Reserved.
 # Original Author:: Ying Yin (mailto:yingyin@google.com)
 #
-# Key detection by checking key bounds.
-#
-# This doc string should contain an overall description of the module/script
-# and can optionally briefly describe exported classes and functions.
-#
-#    ClassFoo:      One line summary.
-#    function_foo:  One line summary.
-#
+# Key detection accuracy by checking key bounds.
 require 'optparse'
 require_relative 'keyboard.rb'
 
@@ -29,7 +22,11 @@ class AccuracyEvaluator
   end
 
   def result
-    "accuracy = #{@positive.to_f / (@positive + @negative)}"
+    total = @positive + @negative
+<<EOS
+accuracy = #{@positive.to_f / total}
+error rate = #{@negative.to_f / total}
+EOS
   end
 end
 
@@ -72,19 +69,27 @@ class Simulator
 end
 
 def main
-  create_optparser.parse!
-  File.open ARGV[0] do |key_file|
+  options = parse_options ARGV
+  File.open options[:keyboard_file] do |key_file|
     keyboard = Keyboard.new key_file
     simulator = Simulator.new STDIN, keyboard
     simulator.run
-    p simulator.result
+    print simulator.result
   end
 end
 
-def create_optparser
-  OptionParser.new do |opts|
-    opts.banner = 'Usage: eval_keytaps.rb < <dataset_file>'
+def parse_options(args)
+  options = {}
+  opts = OptionParser.new do |opts|
+    opts.banner = 'Usage: eval_keytaps.rb -k<keyboard_layout_file> ' +
+                  '< <dataset_file>'
+    opts.on '-k', '--keyboard KEYBOARD_FILE',
+        'keyboard layout file in csv format' do |k|
+      options[:keyboard_file] = k
+    end
   end
+  opts.parse! args
+  options
 end
 
 if __FILE__ == $0
