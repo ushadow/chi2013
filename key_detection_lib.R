@@ -162,7 +162,7 @@ EvalPostureModelWithDistance <- function(train.df, test.df, keyboard,
                             'NegDistance2')
 }
 
-EvalKeyDetectionByPostureByKey <- function(train.df, test.df, keyboard,
+EvalPostureKeyModel <- function(train.df, test.df, keyboard,
                                            verbose) {
   # Evaluates key detection accuracy by using one Gaussian model for each key
   # for each posture.
@@ -176,11 +176,14 @@ EvalKeyDetectionByPostureByKey <- function(train.df, test.df, keyboard,
   for (l in levels(train.df$inputing_finger)) {
     train1 <- train.df[train.df$inputing_finger == l, ]
     test1 <- test.df[test.df$inputing_finger == l, ]
-    res <- lapply(all.letters, EvalKeyDetectionByKey,
-        train.df = train1, test.df = test1, keyboard = keyboard,
+    res <- EvalKeyDetection(train.df = train1, test.df = test1, keyboard = keyboard,
         combined.gaussians = combined.gaussians, verbose = verbose)
+    if(is.null(summary))
+      summary <- res
+    else
+      summary <- rbind(summary, res)
   }
-  do.call(rbind, res)
+  return(summary)
 }
 
 EvalKeyModel <- function(train.df, test.df, keyboard, verbose = F) {

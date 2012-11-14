@@ -29,3 +29,6 @@ WriteTable(ag)
 sink()
 
 print(sprintf("Over all accuracy = %.5f", mean(ag$accuracy)))
+error <- 1 - ag$accuracy
+print(sprintf("Over all error rate = %.5f", mean(error)))
+print(sprintf("SD = %.5f", sd(error)))

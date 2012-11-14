@@ -72,7 +72,7 @@ raw_files.each do |f|
   task :filter_left => filtered_noleft
 
   ['EvalBaseModel', 'EvalKeyModel', 'EvalKeyModelByRow',
-   'EvalKeyDetectionByPosture', 'EvalKeyDetectionByPostureGroup',
+   'EvalPostureKeyModel', 'EvalKeyDetectionByPostureGroup',
    'EvalPostureModelWithDistance'].each do |model|
     cv_model = File.join 'out', 'analysis',
                          "#{File.basename filtered_noleft}-#{model}"
