@@ -10,23 +10,23 @@ require_relative 'keyboard.rb'
 
 class AccuracyEvaluator
   def initialize
-    @positive = @negative = 0
+    @result = Hash.new { |hash, key| hash[key] = {positive: 0, negative:0} }
   end
 
-  def add_positive
-    @positive += 1
+  def add_positive(user_id)
+    @result[user_id][:positive] += 1
   end
 
-  def add_negative
-    @negative += 1
+  def add_negative(user_id)
+    @result[user_id][:negative] += 1
   end
 
   def result
-    total = @positive + @negative
-<<EOS
-accuracy = #{@positive.to_f / total}
-error rate = #{@negative.to_f / total}
-EOS
+    errors = @result.map { |k, v| v[:negative].to_f / (v[:positive] + v[:negative]) }
+    sum = errors.inject :+
+    mean = sum / errors.length
+    var = errors.inject(0) { |sum, n| sum + (n - mean) * (n - mean) } / errors.length
+    {mean: mean, sd: Math.sqrt(var), errors: errors}
   end
 end
 
@@ -45,10 +45,11 @@ class Simulator
       key = tokens[@keyindex].empty? ? ' ' : tokens[@keyindex]
       x = tokens[@xindex].to_f
       y = tokens[@yindex].to_f
+      user_id = tokens[@user_index].to_i
       if @keyboard.in_key_bounds? key, x, y
-        @evaluator.add_positive
+        @evaluator.add_positive user_id
       else
-        @evaluator.add_negative
+        @evaluator.add_negative user_id
       end
     end
   end
@@ -65,6 +66,7 @@ class Simulator
     @keyindex = @header.index('key')
     @xindex = @header.index('xkeyboard')
     @yindex = @header.index('ykeyboard')
+    @user_index = @header.index('user_id')
   end
 end
 
@@ -74,7 +76,7 @@ def main
     keyboard = Keyboard.new key_file
     simulator = Simulator.new STDIN, keyboard
     simulator.run
-    print simulator.result
+    simulator.result[:errors].each { |n| puts n }
   end
 end
 
