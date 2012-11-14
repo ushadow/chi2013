@@ -293,11 +293,11 @@ EvalBaseModel <- function(train.df, test.df, keyboard, verbose) {
   base.model <- list(xmean = 0, ymean = 0, cov = matrix(c(400, 0, 0, 400), ncol = 2))
   if (verbose)
     print(base.model)
-  DetectKey(test.df, keyboard, base.model)
+  DetectKey(test.df, keyboard, NULL, NULL, base.model)
 }
 
 DetectKey <- function(test.df, keyboard, key.model = NULL,
-    combined.model = NULL, base.model, fun = dvmnorm) {
+    combined.model = NULL, base.model, fun = dmvnorm) {
   # Computes the detected key.
   all.letters <- c(letters, ' ')
   res <- sapply(all.letters, ComputeMetric, x = test.df$xkeyboard,
