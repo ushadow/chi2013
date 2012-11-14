@@ -6,6 +6,9 @@ library('plyr')
 kMinGaussianDataPoints <- 50
 kCovScale <- 1000
 
+kPostureAdaptiveKeys <- c('q', 'w', 'e', 'r', 't', 'a', 's', 'd', 'f', 'g',
+                          'z', 'x', 'c', 'v', 'b')
+
 KeyGaussiansByPostureAndDirection <- function(df, keyboard, posture.keys,
     use.scale = F) {
   # Computes Gaussians for each key and posture, and different directions.
@@ -172,12 +175,14 @@ EvalPostureKeyModel <- function(train.df, test.df, keyboard,
   #   test.df: Data frame of test data. Must have 'inputing_finger' column.
   summary <- NULL
   all.letters <- c(letters, ' ')
+  base.model <- ComputeBaseModel(train.df)
   combined.gaussians <- KeyGaussians(train.df, kMinGaussianDataPoints)
   for (l in levels(train.df$inputing_finger)) {
-    train1 <- train.df[train.df$inputing_finger == l, ]
+    train1 <- train.df[train.df$inputing_finger == l & train.df$key %in% kPostureAdaptiveKeys, ]
+    key.model <- KeyGaussians(train1, kMinGaussianDataPoints)
     test1 <- test.df[test.df$inputing_finger == l, ]
-    res <- EvalKeyDetection(train.df = train1, test.df = test1, keyboard = keyboard,
-        combined.gaussians = combined.gaussians, verbose = verbose)
+    res <- DetectKey(test.df = test1, keyboard = keyboard, key.model = key.model,
+        combined.model = combined.gaussians, base.model = base.model)
     if(is.null(summary))
       summary <- res
     else

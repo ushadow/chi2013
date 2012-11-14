@@ -85,24 +85,6 @@ raw_files.each do |f|
     task :cv_model => cv_model
   end
 
-  cv_output = File.join 'out', 'analysis',
-                        "#{File.basename filtered_file}-cv-posture"
-  file cv_output => ['out/analysis', filtered_file, user_file,
-                     keyboard_table] do |t|
-    sh ["R --no-save --slave --args #{filtered_file} #{user_file}",
-        "#{keyboard_table} < ./cross_validation.R > #{t.name}"].join ' '
-  end
-  task :cv_posture => cv_output
-
-  cv_key_output = File.join 'out', 'analysis',
-                     "#{File.basename filtered_file}-cv-posture-key"
-  file cv_key_output => ['out/analysis', filtered_file, user_file,
-                     keyboard_table] do |t|
-    sh ["R --no-save --slave --args #{filtered_file} #{user_file}",
-        "#{keyboard_table} #{t.name} < ./cross_validation_by_key.R"].join ' '
-  end
-  task :cv_posture_key => cv_key_output
-
   stats_file = File.join 'out/analysis',
                          "#{File.basename filtered_noleft}.stats"
   file stats_file => ['out/analysis', filtered_noleft] do |t|
@@ -112,11 +94,13 @@ raw_files.each do |f|
   desc 'Compute stats and graphs for the data.'
   task :stats => stats_file
 
-  within_user_output = File.join 'out', 'log',
-                                 "#{File.basename filtered_file}-withinuser"
-  file within_user_output => ['out/log', filtered_file] do |t|
-    sh ["R --no-save --slave --args #{filtered_file} #{keyboard_table}",
-        "#{user_file} < detect_keys_within_user.R > #{t.name}"].join ' '
+  within_user_output = File.join 'out', 'analysis',
+                                 "#{File.basename filtered_noleft}-withinuser"
+  file within_user_output => ['out/analysis', filtered_noleft] do |t|
+    within_user_log = within_user_output + '-log'
+    sh ["R --no-save --slave --args #{filtered_noleft} #{keyboard_table}",
+        "#{user_file} #{t.name} < detect_keys_within_user.R",
+        "> #{within_user_log}"].join ' '
   end
   task :within_user => within_user_output
 

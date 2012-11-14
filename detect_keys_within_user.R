@@ -9,10 +9,10 @@ args <- commandArgs(trailingOnly = T)
 file <- args[1]
 keyboard.file <- args[2]
 user.file <- args[3]
+output.file <- args[4]
 
 df <- ReadData(file)
 user.data <- ReadData(user.file)
-df <- RemoveLeftHand(df, user.data)
 df <- CombineIAndT(df)
 keyboard <- ReadData(keyboard.file)
 
@@ -20,7 +20,13 @@ df$ykeyboard <- -df$ykeyboard
 keyboard$ycenter <- -keyboard$ycenter
 df <- ComputeOffset(df, keyboard)
 summary <- CrossValidationWithinUser(df, keyboard)
-print(summary)
+
+sink(output.file)
+WriteTable(summary)
+sink()
+
 accuracy <- mean(summary$accuracy)
 print(sprintf("Within user and with combined Gaussians: accuracy = %f",
       accuracy))
+errors <- 1 - summary$accuracy
+print(sprintf("error rate = %.5f, sd = %.5f", mean(errors), sd(errors)))
