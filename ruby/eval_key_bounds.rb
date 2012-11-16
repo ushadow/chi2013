@@ -13,20 +13,22 @@ class AccuracyEvaluator
     @result = Hash.new { |hash, key| hash[key] = {positive: 0, negative:0} }
   end
 
-  def add_positive(user_id)
+  def add_positive(user_id, input_finger)
     @result[user_id][:positive] += 1
+    @result[user_id][:input_finger] = input_finger
   end
 
-  def add_negative(user_id)
+  def add_negative(user_id, input_finger)
     @result[user_id][:negative] += 1
+    @result[user_id][:input_finger] = input_finger
   end
 
-  def result
-    errors = @result.map { |k, v| v[:negative].to_f / (v[:positive] + v[:negative]) }
-    sum = errors.inject :+
-    mean = sum / errors.length
-    var = errors.inject(0) { |sum, n| sum + (n - mean) * (n - mean) } / errors.length
-    {mean: mean, sd: Math.sqrt(var), errors: errors}
+  def output_result
+    puts %w(user_id input_finger error_rate).join ','
+    @result.each do |k, v|
+      error_rate = v[:negative].to_f / (v[:negative] + v[:positive])
+      puts [k, v[:input_finger], error_rate].join ','
+    end
   end
 end
 
@@ -46,16 +48,17 @@ class Simulator
       x = tokens[@xindex].to_f
       y = tokens[@yindex].to_f
       user_id = tokens[@user_index].to_i
+      input_finger = tokens[@input_finger_index]
       if @keyboard.in_key_bounds? key, x, y
-        @evaluator.add_positive user_id
+        @evaluator.add_positive user_id, input_finger
       else
-        @evaluator.add_negative user_id
+        @evaluator.add_negative user_id, input_finger
       end
     end
   end
 
-  def result
-    @evaluator.result
+  def output_result
+    @evaluator.output_result
   end
 
   private
@@ -67,6 +70,7 @@ class Simulator
     @xindex = @header.index('xkeyboard')
     @yindex = @header.index('ykeyboard')
     @user_index = @header.index('user_id')
+    @input_finger_index = @header.index('inputing_finger')
   end
 end
 
@@ -76,7 +80,7 @@ def main
     keyboard = Keyboard.new key_file
     simulator = Simulator.new STDIN, keyboard
     simulator.run
-    simulator.result[:errors].each { |n| puts n }
+    simulator.output_result
   end
 end
 
