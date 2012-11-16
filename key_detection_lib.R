@@ -320,7 +320,8 @@ EvalUserResult <- function(df) {
   # Evaludates the key detection accuracy for a user.
   #
   # Args:
-  #   df: Data frame should have 'inputing_finger' column.
+  #   df: Data frame should have 'inputing_finger', 'detected.key', 'key', and
+  #       'user_id' columns.
   accuracy.table <- table(df$detected.key == df$key)
   no.true <- 0
   if ('TRUE' %in% names(accuracy.table)) {

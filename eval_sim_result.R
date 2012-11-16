@@ -1,4 +1,7 @@
+# Functions to evaluate simulation results.
 source('plot_lib.R')
+source('analysis_lib.R')
+source('key_detection_lib.R')
 
 PlotPairedEllipses <- function(r1, r2, df, keyboard, key, predicted.key,
     inputing_finger, file.name) {
@@ -71,3 +74,10 @@ PlotPointsEllipses <- function(points, ellipses.data, keybounds, file.name) {
   dev.off()
 }
 
+EvalErrorRate <- function(df) {
+  df <- ChangeColName(df, 'predicted_key', 'detected.key')
+  ag <- ddply(df, .(user_id), EvalUserResult)
+  errors <- 1 - ag$accuracy
+  print(sprintf('mean = %.5f', mean(errors)))
+  print(sprintf('sd = %.5f', sd(errors)))
+}
