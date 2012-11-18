@@ -5,6 +5,9 @@ source('key_detection_lib.R')
 
 PlotPairedEllipses <- function(r1, r2, df, keyboard, key, predicted.key,
     inputing_finger, file.name) {
+  # Input:
+  #   r1: per line result from simulation 1.
+  #   r2: per line result from simulation 2.
   error.diff <- ErrorDiff(r1, r2)
   error.diff <- error.diff[error.diff$key == key &
                            error.diff$predicted_key == predicted.key, ]
@@ -77,7 +80,8 @@ PlotPointsEllipses <- function(points, ellipses.data, keybounds, file.name) {
 EvalErrorRate <- function(df) {
   df <- ChangeColName(df, 'predicted_key', 'detected.key')
   ag <- ddply(df, .(user_id), EvalUserResult)
-  errors <- 1 - ag$accuracy
-  print(sprintf('mean = %.5f', mean(errors)))
-  print(sprintf('sd = %.5f', sd(errors)))
+  ag$errors <- 1 - ag$accuracy
+  print(sprintf('mean = %.5f', mean(ag$errors)))
+  print(sprintf('sd = %.5f', sd(ag$errors)))
+  return(ag)
 }
