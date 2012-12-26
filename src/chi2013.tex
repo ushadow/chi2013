@@ -139,7 +139,8 @@ A \textit{mature} model will continue to renew itself with new user data to acco
  
 \item The system does not require a separate training (data collection) phase for each individual. It is more practical to launch such an adaptive system.
 
-\item The system continually updates and renewal itself, so it can accommodate long term changes in user behavior. 
+\item The system continually updates and renews itself, so it can accommodate
+long term changes in user behavior.
 \end{enumerate}
 We call keyboards built in such an approach SBM (spatial backoff model) keyboards. The SBM approach also raises many questions and challenges which will be addressed in the rest of the paper. Here we give a brief outline to these problems and their solutions.
 
@@ -159,7 +160,7 @@ Second, in section ``Input Hand Posture Classification'' we present a detailed
 SVM-based classifier of hand postures that returns mode identification of 
 two-thumb or one-finger (including one-thumb) posture from users' touch points while entering text.
 
-Third, using the posture classification method and user adaptation, does higher 
+Third, using the posture classification method and user adaptation, do higher 
 order specific models really offer better error corrections than a lower order 
 or base model without language model (as a baseline)? We address this question 
 in the ``Evaluation of Standalone SBM'' section. With \textit{inferred} posture 
@@ -199,7 +200,7 @@ key-target resizing can sometimes prevent users from entering their desired text
 users' expectation about keyboard functionality. They ensure that touch points within
 the anchor area of a key is always detected as that key irrespective to the language model.
 
-There is also a number of research related to personal adaptation. Findlater and
+In the area of personal adaptation for STK, Findlater and
 Wobbrock~\cite{Findlater:2012} explored spatial model adaptation on large touch 
 surfaces, where one can use ten fingers to do traditional desktop style touch 
 typing. Based on a user study of 12 participants, they find measurable
@@ -225,7 +226,29 @@ relying on the hidden identity of the true intended key.
 The key and individual adaptive methods mentioned earlier all assume that users' input posture
 remains the same. We observe that the same individual may change hand postures even on the same device. Building on the observations made in [1], we investigate how posture adaptation can be implemented and how it can actually affect key estimation accuracy.
 
-The idea of backoff to a lower order model when a higher order more specific model is not available is commonly used in language modelling (LM) for speech recognition~\cite{Katz:1987, Zitouni:2007}. For example, when unseen \textit{n}-gram events are encountered, the backoff class based \textit{n}-gram language model is used.  In LM,  all context is observed including backoffs. However in our model some of the variables are observed, e.g. user, whereas some are hidden and need to be inferred, e.g. posture. As a result, the backoff conditions are more complicated in our model.
+There is also a body of work on user modeling and adaptation that are not
+directly related to touch keyboard typing, but findings from those work can
+still be useful to guide the research in personalized STK. A
+user-adaptive system can be defined as a system that makes
+nontrivial inferences concerning properties of the user and adapts its actions
+to the inferred properties ~\cite{Jameson:2000}. Some systems use rule-based
+adaptation that may lack empirical justification, while others use 
+decision-theoretic methods (e.g.,~\cite{Jameson:1998}). Jameson et al.~\cite{Jameson:2000} argue that it is important to develop decision procedures for adaptation in a principled and
+empirically justified way, and they presented a method to do so based on a
+Bayesian network model. Our system's adaptation decisions are also data-driven,
+but we did not make a specific user model. More work could be done in the
+user-modeling direction to incorporate even more properties for
+STK adaptation, e.g., whether the user is walking or sitting, the user's body
+posture etc.
+
+The idea of backoff to a lower order model when a higher order more specific 
+model is not available is commonly used in language modelling (LM) for speech 
+recognition~\cite{Katz:1987, Zitouni:2007}. For example, when unseen 
+\textit{n}-gram events are encountered, the backoff class based \textit{n}-gram 
+language model is used.  In LM,  all context is observed including backoffs. 
+However in our model some of the variables are observed, e.g. user, whereas some
+are hidden and need to be inferred, e.g. posture. As a result, the backoff 
+conditions are more complicated in our model.
 
 Finally, researchers have explored other dimensions to improve the 
 text input experience on touchscreen keyboard. One dimension is using hardware
@@ -236,7 +259,12 @@ These dimensions are orthogonal to the language and the spatial models, and can 
 combined together to further increase the input accuracy and speed.
 
 \section{Research Methods}
-As smartphone keyboard become more sophisticated, and given the relatively complex solutions proposed that involve multiple components, multiple phases, and learning,  we fear the traditional lab experiments based HCI evaluation method may not be efficient or sensitive enough for researchers to make rapid progress. In this paper we use a combination of HCI and ML (machine learning) evaluation methods, along with algorithm and system development. 
+As smartphone keyboards become more sophisticated, and given the relatively
+complex solutions proposed that involve multiple components, multiple phases, 
+and learning,  we fear the traditional lab experiments based HCI evaluation 
+method may not be efficient or sensitive enough for researchers to make rapid 
+progress. In this paper we use a combination of HCI and ML (machine learning) 
+evaluation methods, along with algorithm and system development.
 
 We first select a smartphone typing dataset as the empirical basis of training 
 and cross-validation. The experiment that generated the dataset had been peer 
@@ -246,11 +274,11 @@ keyboard run on an Android touchscreen phone.  The participants were encouraged
 to type as naturally as possible and not to correct any errors. The goal was to 
 collect user’s touch patterns by their natural instinct with little concern to 
 technology constraint. The experiment was between-subject in which each 
-participant used one hand posture to type. For consistency, we removed the data 
+participant used one hand posture to type. For consistency, we remove the data 
 from 2 left-handed users in our analysis, and are left with data from 9 users 
 using one-index-finger input, 11 users using one-thumb input and 10 users using 
 two-thumb input.  We also 
-filtered out touch points that are 1.5 times the height of the key away from 
+filter out touch points that are 1.5 times the height of the key away from 
 the center of the target key. After this, there are 84292 total touch points.
  
 A basic dependent variable (measure) of the dataset and any models built from it
@@ -266,7 +294,7 @@ of different models.
 
 To get a sense of the error variation among different input postures, we
 calculate the mean error rates by just checking whether each touch point lies within the
-boundary of the target key. The mean error rate using this method is
+bounding box of the target key. The mean error rates using this method are
 7.98\% (SD = 5.7) overall, 7.92\% (SD = 5.8) for one-index-finger, 6.59\% (SD =
 3.7) for one-thumb, and 10.69\% (SD = 7.4) for two-thumb input respectively.
 Since we found much less difference between the index finger condition and the single thumb condition and due to posture classification reliability concerns, we combine index-finger and one-thumb input as one-finger input condition. Hence the posture class random variable $y$ can take values in the set $\mathcal{Y} = \{\text{one-finger}, \text{two-thumb}\}$.
@@ -274,13 +302,16 @@ For all evaluations, the ratio of the number of users using one-finger input to
 that using two-thumb input is kept the same for the training and testing datasets.
 
 \section{Hierarchical Spatial Backoff Models (SBM)}
-The hierarchical adaptive SBM consists a number of submodels in different “orders” (Figure. \ref{fig:hierarchy}). Each submodel is represented by a bivariate Gaussian distribution~\cite{Azenkot:2012, Goodman:2002, Rashid:2008}.
+The hierarchical adaptive SBM consists a number of submodels in different
+``orders'' (Figure. \ref{fig:hierarchy}). Each submodel is represented by a
+bivariate Gaussian  (or ``normal'') distribution~\cite{Azenkot:2012,
+Goodman:2002, Rashid:2008}.
 The zeroth order is the base model which is key, individual, and posture
-independent, i.e. all the keys have the same Gaussian distribution $N(\underline\mu, \Sigma)$
-where $\underline\mu \in \mathbb{R}^2$ is the mean $(x, y)$ offsets from the center of
-each key's bounding box, and $\Sigma$ is a $2\times 2$ covariance matrix. This is the most general model combining all data together. The
-higher order submodels adapt to a combination of 
-key positions, hand postures, and individuals. For example, the ``posture adaptive'' model, adapts to input posture only which means there is one Gaussian model $N(\underline\mu_y, \Sigma_y)$ for each posture $y$ for \textit{all} keys. The ``posture \& key adaptive'' model adapts to both posture and key which means there is one Gaussian model $N(\underline\mu_{y, k}, \Sigma_{y, k})$ for each posture $y$ and key $k$ combination.  The highest order model has one Gaussian model $N(\underline\mu_{y,u,k}, \Sigma_{y,u,k})$ for each posture $y$, user $u$ and key $k$ combination.
+independent, i.e. all the keys have the same Gaussian
+distribution $N(\underline\mu, \Lambda)$ where $\underline\mu \in \mathbb{R}^2$ is the mean
+$(x, y)$ offsets from the center of each key's bounding box, and $\Lambda$ is
+the $2\times 2$ covariance matrix. This is the most general model combining all data together. The higher order submodels adapt to a combination of 
+key positions, hand postures, and individuals. For example, the ``posture adaptive'' model, adapts to input posture only which means there is one Gaussian model $N(\underline\mu_y, \Lambda_y)$ for each posture $y$ for \textit{all} keys. The ``posture \& key adaptive'' model adapts to both posture and key which means there is one Gaussian model $N(\underline\mu_{y, k}, \Lambda_{y, k})$ for each posture $y$ and key $k$ combination.  The highest order model has one Gaussian model $N(\underline\mu_{y,u,k}, \Lambda_{y,u,k})$ for each posture $y$, user $u$ and key $k$ combination.
 
 \begin{figure}[tb]
   \centering
@@ -302,13 +333,16 @@ backoff process, and the priority of the models at the same level to use can
 also be design choices, but the analysis in the next section gives
 guidance and suggestion on how to determine the order.
 
-\section{Key Estimation Formulation} 
+\section{Key Estimation Formulation}\label{sec:formulation}
 As mentioned in the Research Methods section, our basic measure for analysis and comparison of the spatial models is character error rate. This is computed as
 \begin{align}
 \text{character error rate} = \frac{\text{No. wrongly estimated characters}}{\text{No. all target characters}}
 \end{align}
 
-Given $i$\textsuperscript{th} touch point coordinates $\underline c_i \in \mathbb{R}^2$, we estimate the input character as the most likely intended key, $\hat k_i$,  given by the following formulation:
+Character estimation is made based on an underlying model which can consist
+both a language model and a spatial model.
+We use $\underline\theta$ to denote the parameter vector of the overall model. Given
+$i$\textsuperscript{th} touch point coordinates $\underline c_i \in \mathbb{R}^2$, we estimate the input character as the most likely intended key, $\hat k_i$,  given by the following formulation:
 \begin{align}
 \hat k_i &= \arg\max_k p(k | \underline c_i; \underline \theta) \\
           &= \arg\max_k \frac{p(\underline c_i, k; \underline \theta)}{\sum_k p(\underline c_i, k; \underline \theta)} \\
@@ -320,14 +354,19 @@ where $\underline\theta_l$ represents the parameter vector of the language model
 \hat k_i = \arg\max_k p(\underline c_i | k; \underline \theta_s)
 \end{align}
 
-The spatial model parameter vector $\underline \theta_s$ depends on the model selected from the hierarchical SBM. For example, when the posture, individual and key adaptive model is selected, then
+The spatial model parameter vector $\underline \theta_s$ depends on the submodel
+selected from the hierarchical SBM. For example, when the posture, individual and key adaptive model is selected, then
 \begin{align}          
-\hat k_i = \arg\max_k \sum_{y, u} N(\underline c_i - \underline o_k; \underline\mu_{y,u,k}, \Sigma_{y,u,k})[[y = \textsf{y} \wedge u = \textsf{u}]]
+\hat k_i = \arg\max_k \sum_{y, u} N(\underline c_i - \underline o_k; \underline\mu_{y,u,k}, \Lambda_{y,u,k})[[y = \textsf{y} \wedge u = \textsf{u}]]
 \end{align}
 where $\underline o_k$ is the center of the visual bounding box of key $k$, and $\underline c_i - \underline o_k$ 
 represents the offset. $\textsf{y}$ and $\textsf{u}$ represent a particular value for the posture 
 and the user respectively. $[[y = \textsf{y} \wedge u = \textsf{u}]] = 1$ if the 
-statement is true, and $0$ otherwise. This is essentially making a hard decision on the 
+statement is true, and $0$ otherwise. Note that we use regular serifed fonts,
+e.g., $y$, to denote random variables, and use san-serif fonts, e.g.,
+$\textsf{y}$, to denote known quantities.
+
+The above formulation makes hard decisions on the 
 posture and user variables for choosing the appropriate model parameters. For the user variable, 
 this is reasonable because smartphones are personal devices and we can assume the 
 same user typing on the same device. For the posture variable, potentially we could also 
@@ -352,17 +391,17 @@ backoff models to use when there is not enough data for higher order models.
     \hline
     Distance from the center of the keys & 7.98\% (5.7) \\
     \hline
-    \multicolumn{1}{|p{0.7\columnwidth}|}{Base model (same Gaussian model $N(\underline 0, \Sigma)$ for
+    \multicolumn{1}{|p{0.7\columnwidth}|}{Base model (same Gaussian model $N(\underline 0, \Lambda)$ for
     all the keys with a full covariance matrix)} & 7.85\% (5.4) \\
     \hline
     \multicolumn{1}{|p{0.7\columnwidth}|}{Key adaptive model, $N(\underline
-    \mu_k, \Sigma_k)$} & 8.02\% (5.6) \\
+    \mu_k, \Lambda_k)$} & 8.02\% (5.6) \\
     \hline
     \multicolumn{1}{|p{0.7\columnwidth}|}{Posture \& key adaptive model,
-    $N(\underline \mu_{y,k}, \Sigma_{y,k})$} & 7.06\% (4.4) \\
+    $N(\underline \mu_{y,k}, \Lambda_{y,k})$} & 7.06\% (4.4) \\
     \hline
      \multicolumn{1}{|p{0.7\columnwidth}|}{Individual \& key adaptive model,
-     $N(\underline \mu_{u,k}, \Sigma_{u,k})$} & 6.85\% (4.4) \\
+     $N(\underline \mu_{u,k}, \Lambda_{u,k})$} & 6.85\% (4.4) \\
     \hline
   \end{tabular}
   \caption{Comparison of character error rate (no language model) with
@@ -373,18 +412,18 @@ backoff models to use when there is not enough data for higher order models.
 The simplest model is a Gaussian distribution with zero mean $x$ and $y$
  offsets and the same spherical covariance matrix for all the keys. Key
 detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates. 
-Our base model has a full covariance matrix $\Sigma$ trained from the
-training data, but the same base model $N(\underline 0, \Sigma)$ is used for all keys. Hence, when using the base model for key estimation, the most likely intended key is
+Our base model has a full covariance matrix $\Lambda$ trained from the
+training data, but the same base model $N(\underline 0, \Lambda)$ is used for all keys. Hence, when using the base model for key estimation, the most likely intended key is
 \begin{align}          
-\hat k = \arg\max_k N(\underline c_i - \underline o_k; \underline 0, \Sigma)
+\hat k = \arg\max_k N(\underline c_i - \underline o_k; \underline 0, \Lambda)
 \end{align}
 
 
 \subsection{Key Adaptation}
 A basic key adaptive model has one bivariate Gaussian model
-$N(\underline\mu_k, \Sigma_k)$ for each key $k$ built  using data from all users in the training dataset. The most likely intended key based on key adaptive model is
+$N(\underline\mu_k, \Lambda_k)$ for each key $k$ built  using data from all users in the training dataset. The most likely intended key based on key adaptive model is
 \begin{align}          
-\hat k_i = \arg\max_k N(\underline c_i - \underline o_k; \underline \mu_k, \Sigma_k)
+\hat k_i = \arg\max_k N(\underline c_i - \underline o_k; \underline \mu_k, \Lambda_k)
 \end{align}
 
 The result in Table~\ref{tab:comparison} shows that the key adaptive 
@@ -426,11 +465,11 @@ that the improvement in accuracy is significant when we use posture and key
 adaptation versus key adaptation only (t(29) = -2.4421, p = 0.01).
 
 There can be different levels of complexity for posture adaptation. For the most complex one, we can have
-two models for each key for each input posture, i.e., $N(\underline \mu_{y,k}, \Sigma_{y,k})$ for $y \in
+two models for each key for each input posture, i.e., $N(\underline \mu_{y,k}, \Lambda_{y,k})$ for $y \in
 \{\text{one-finger, two-thumb}\}$; or we can do posture adaptation only for a certain
 number of keys. The best result is obtained when we only do posture adaptation for the keys on 
 the left side, and for the keys on the right side, their Gaussian models are
-independent of the posture, i.e., $N(\underline\mu_k, \Sigma_k)$.
+independent of the posture, i.e., $N(\underline\mu_k, \Lambda_k)$.
 The error rate for posture and key adaption shown in Table~\ref{tab:comparison} is based on 
 posture adaptation for the keys on the left side. This approach is similar to the ``parameter tying'' technique that is often used in acoustic modeling in speech recognition~\cite{Bellegarda:1989} and natural language processing~\cite{Lin:1995} to deal with insufficient training data.
 
@@ -442,8 +481,8 @@ where
 \begin{align}
 p(\underline c_i | k, y; \underline\theta_s) = \left\{
   \begin{array}{l l}
-  N(\underline c_i - \underline o_k; \underline \mu_{y, k}, \Sigma_{y,k}) & \text{if $k$ is on left side} \\
-  N(\underline c_i - \underline o_k; \underline \mu_{k}, \Sigma_{k}) & \text{if $k$ is on right side} \\
+  N(\underline c_i - \underline o_k; \underline \mu_{y, k}, \Lambda_{y,k}) & \text{if $k$ is on left side} \\
+  N(\underline c_i - \underline o_k; \underline \mu_{k}, \Lambda_{k}) & \text{if $k$ is on right side} \\
 \end{array} \right.
 \end{align}
 
@@ -473,8 +512,8 @@ where
 \begin{align}
 p(\underline c_i | k, u; \underline\theta_s) = \left\{
   \begin{array}{l l}
-  N(\underline c_i - \underline o_k; \underline \mu_{k}, \Sigma_{k}) & \text{if $i \le T_\text{user}$} \\
-  N(\underline c_i -  \underline o_k; \underline \mu_{u, k}, \Sigma_{u, k}) & \text{if $i >T_\text{user}$} \\
+  N(\underline c_i - \underline o_k; \underline \mu_{k}, \Lambda_{k}) & \text{if $i \le T_\text{user}$} \\
+  N(\underline c_i -  \underline o_k; \underline \mu_{u, k}, \Lambda_{u, k}) & \text{if $i >T_\text{user}$} \\
 \end{array} \right. \label{eq:user-adaptive}
 \end{align}
 $T_\text{user}$ is the minimum number of data points needed to build a user specific key model. 
@@ -485,7 +524,7 @@ The result in the last row of Table~\ref{tab:comparison} is based on the
 following method. For each fold of the cross-validation, data from the training set are used to 
 train the combined backoff key models. For each user $u$ in the test set,
 50\% of the data for each key is used to train the individual and key adaptive
-model, i.e., $N(\underline \mu_{u, k}, \Sigma_{u, k})$.
+model, i.e., $N(\underline \mu_{u, k}, \Lambda_{u, k})$.
 The accuracy of these data points are tested on the combined key models.
 The remaining 50\% of the data for each user are tested on the user and key adaptive 
 model. 
@@ -542,10 +581,11 @@ long distance move is required.
 The analysis of the touch point data confirms with this hypothesis. For the 
 one-finger input, the time taken increases with the distance
 moved, whereas for the two-thumb input, there is no obvious trend. The
-difference is more significant when the log square distance (natural log) is greater than 10 px.
+difference is more significant when the log square distance (natural log)
+between two consecutive touch points is greater than 10 px.
 
 Based on this finding, we include the time elapsed and the log square distance
-between two consecutive key presses as the features for the posture classifier. 
+between two consecutive touch points as the features for the posture classifier. 
 To account for individual typing speed differences, we also use normalized time 
 elapsed between consecutive key presses as the third feature. It is calculated 
 by dividing the time elapsed by the average time elapsed for the last 10 key
@@ -559,7 +599,7 @@ rapidly, we look at a sliding time window of 10 touch points (about 2 words). Fo
 each time window, we use another SVM classifier with the following features:
 \begin{enumerate}
 \item Correlation between time elapsed and log distance (this feature has the
-advantage of being speed independent) (see Figure. \ref{fig:boxplot}).
+advantage of being speed independent)
 \item Sum of $p_\text{one-finger}^{\text{single}}$ for touch points satisfying condition $C$.
 \item Sum $p_\text{two-thumb}^{\text{single}}$ for touch points satisfying condition $C$.
 \item Number of touch points classified as one-finger input.
@@ -731,7 +771,7 @@ can keep collecting data from the user, build the model when there is
 sufficient data and also keep updating the model. Based on Figure
 \ref{fig:user-adapt}, we suggest that a good choice of the minimum number is
 around 100. Alternatively, the system can use the individual data point to 
-update the combined the model at the very beginning. In this case the minimum 
+update the combined model at the very beginning. In this case the minimum 
 number required can be used to weigh the combined model.
 
 \subsubsection{Posture, Individual and Key Adaptation}
@@ -768,29 +808,64 @@ data. Because of the dataset limit, what we have addressed is fundamentally an
 backoff procedure and sequence, and certainly the parameters learned from the 
 data, may be changed and optimized in the future.
 
+In our proposed SBM, we switch from a more general to a more specific submodel
+when a certain threshold of confidence is reached or enough data points are
+collected. This is essentially making hard decisions, i.e., the probability of
+selecting one submodel versus the other is either 1 or 0. Alternatively,
+we can employ a mixture model that is essentially a weighted average of
+the general and the specific submodels (i.e., using soft decisions), with the
+relative weight of the specific submodel increasing as confidence in it becomes
+greater. We have started to experiment with this approach for user adaptation,
+i.e., combining the individual data points with the combined model from the very beginning instead
+of waiting until enough individual data points are collected. The weight of the
+combined data model decreases as more individual data are gathered. So far, we
+did not observe a significant difference in the result with this approach.
+Future work will involve employing the mixture model for posture adaptation to see whether it makes a difference.
+It is also worth noting that even though the mixture model approach may not
+improve accuracy, it may provide a more gradual transition between submodels
+and hence be less disruptive to the interaction at times. The answer to the
+question would be through further user studies to compare the two approaches. 
+
 Once more data are collected to improve the SBM, it will be desirable and
-necessary to conduct more user studies to test the system in terms of typing
+necessary to conduct more user studies to validate the system in terms of typing
 accuracy and speed. It would be especially interesting to investigate how users
 might adapt their behavior to the SBM. For example, as the posture adaptation
 can tolerate left or right horizontal shifts for the two-thumb or one-finger
-input respectively, it would be interesting to see whether this would cause even
-greater shifts in users' touch points.
+input respectively, would this cause even
+greater shifts in users' touch points? Would users learn to adopt the
+tactic of choosing one posture and sticking to it in order to increase the system's
+accuracy, and would it be desirable for them to do so? Might the sudden switch
+by the system from one model to another disrupt interaction by making the input 
+method less predictable? All these are interesting HCI questions to be explored
+through further user studies.
 
 In this work, we combined the index-finger and one-thumb data together because 
 with the current touchscreen phones, it would be difficult to reliably 
 distinguish the two postures in realtime. It is possible to separate them in the
 future and the SBM would still apply. One possibility is augmenting the
 capacitive sensing with a range of frequencies which can help identify different kinds of 
-hand grips \cite{Sato:2012}.
+hand grips \cite{Sato:2012}. Another possibility is adding a widget to the
+keyboard that allows the user to optionally specify what posture they are
+currently using. While this method can eliminate the posture
+prediction error, it creates an overhead for the user. It would be interesting
+to find the trade-off between accuracy and time overhead
+and users' preferences in this regard.
 
 We have so far only considered the spatial model alone. More work is needed
-to explore the interaction between spatial adaptation and language modeling. It would also be interesting to study how
-to use posture detection to guide transposition error correction, because transposition error
-is more likely to occur when two hands are used to type.
+to explore the interaction between spatial adaptation and language modeling.
+As the language model can get fairly complex, our plan is to start with the
+simplest one, e.g., one based on dictionary word frequencies, and then add
+complexity step by step by, e.g., considering bigram frequencies, substitution,
+elimination and transposition errors.
+The formulae in Section ``Key Estimation Formulation'' need to be modified to consider a
+sequence of touch points \cite{Goodman:2002, Gunawardana:2010} instead of just one point.
+It would also be interesting to study how to use posture detection to guide 
+transposition error correction, because transposition error is more likely to 
+occur when two hands are used to type.
 
 \section{Conclusion}
 We have introduced and evaluated a novel hierarchical adaptive spatial model for
-touchscreen keyboard. Through comparative submodel analysis,  evaluation of a prototype implementation, we have shown that both posture and user adaptation for the spatial model can improve key estimation accuracy. When posture, individual and key adaptations are combined, they can
+touchscreen keyboard. Through comparative submodel analysis, evaluation of a prototype implementation, we have shown that both posture and user adaptation for the spatial model can improve key estimation accuracy. When posture, individual and key adaptations are combined, they can
 give the most improvement. For real-world
 implementation, the
 hierarchical structure gives a systematic way of backing-off to successively simpler models  when data is limited
@@ -801,6 +876,11 @@ We have also developed a new touchscreen input posture classification method
 that achieves an accuracy of 86.4\% for classifying one-finger and two-thumb input. When
 combined with the adaptive spatial model, the overall key detection accuracy is increased
 in our simulation.
+
+Our work also opened up many more interesting HCI questions in adaptive STK
+which may not be previously considered. We think that addressing these questions
+would be beneficial to improving the user experience with STK as touchscreen
+devices become almost ubiquitous.
 
 \section{Acknowledgements}
 We want to thank our team members (names omitted for review) for their insightful
