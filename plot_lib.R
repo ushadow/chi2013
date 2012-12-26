@@ -380,3 +380,18 @@ PlotThreshAccuracy <- function(df, baseline, out.file) {
          'Key adaptive only model'), col = colors, lwd = 1)
   dev.off()
 }
+
+# Plots bar graph with 95% confidence interval error bars.
+PlotErrorBar <- function(summary) {
+  summary$model <- factor(summary$model, levels = summary$model)
+  summary$se <- summary$sd / sqrt(summary$n)
+  summary$ci <- summary$se * 1.96
+  ggplot(summary, aes(x = model, y = error.rate)) +
+      xlab('spatial model') +
+      ylab('error rate in %')+
+      geom_bar(position = position_dodge()) +
+      geom_errorbar(aes(ymin = error.rate - se, ymax = error.rate + se),
+                        width = .2,
+                        position=position_dodge(.9))
+}
+

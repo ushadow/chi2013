@@ -7,7 +7,7 @@ classifiers = %w(functions.LibSVM)
 
 exec_module = 'native/out/simulation_driver'
 
-raw_files = ['pepper-tapping-phrase.log', 'salt-tapping-phrase-aligned.log']
+raw_files = ['pepper-tapping-phrase.log']
 
 def push(data_set)
   android_device_dir = '/sdcard/LatinImeGoogle/spatial/models/'
@@ -76,8 +76,7 @@ raw_files.each do |f|
    'EvalPostureModelWithDistance'].each do |model|
     cv_model = File.join 'out', 'analysis',
                          "#{File.basename filtered_noleft}-#{model}"
-    file cv_model => ['out/analysis', filtered_noleft, user_file,
-                      keyboard_table] do |t|
+    file cv_model => ['out/analysis', user_file, keyboard_table] do |t|
       sh ["R --no-save --slave --args #{filtered_noleft} #{user_file}",
           "#{keyboard_table} #{t.name} #{model} < ./cross_validation.R",
           "> #{cv_model}-output"].join ' '
@@ -96,8 +95,8 @@ raw_files.each do |f|
 
   within_user_output = File.join 'out', 'analysis',
                                  "#{File.basename filtered_noleft}-withinuser"
-  file within_user_output => ['out/analysis', filtered_noleft] do |t|
-    within_user_log = within_user_output + '-log'
+  file within_user_output => ['out/analysis'] do |t|
+    within_user_log = within_user_output + '-output'
     sh ["R --no-save --slave --args #{filtered_noleft} #{keyboard_table}",
         "#{user_file} #{t.name} < detect_keys_within_user.R",
         "> #{within_user_log}"].join ' '
