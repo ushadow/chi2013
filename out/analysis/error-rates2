@@ -1,0 +1,6 @@
+n,model,error.rate,sd
+10,'base',8.64,5.1
+10,'key',8.71,5.1
+10,'posture&key',8.39,5.0
+10,'individual&key',7.62,4.8
+10,'posture,individual&key',7.50,4.5

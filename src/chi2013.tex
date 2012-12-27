@@ -169,17 +169,17 @@ could reduce the character error rate by about 13.2\% compared to
 the base model which is key, posture and user invariant.
 
 \section{Related Work}
-
 There is a body of active research on using spatial model, language model, or a combination
 of the two to improve text entry accuracy on a STK. For examples, 
 Al Faraj et al. \cite{AlFaraj:2009} and Magnien et al. \cite{Magnien:2004} both use
-visual highlight of the next possible keys to aid users' typing. Their predictions of the next keys are based on a language model. As our focus is on the 
-spatial model, we also mainly look at the related work in this aspect.    
+visual highlight of the next possible keys to aid users' typing. Their 
+predictions of the next keys are based on a language model. As our focus is on 
+the spatial model, we also mainly look at the related work in this aspect.
 
 Kristensson et al. \cite{Kristensson:2005} propose a geometric pattern matching technique to improve 
-stylus input accuracy. They match the geometric pattern of the touch points on a stylus keyboard against patterns formed by 
-the letter key center positions of legitimate words in a lexicon. Similar to this approach,
-they developed a gesture-based stylus input method where users only need to stroke between the keys \cite{Kristensson:2004}.
+stylus input accuracy. They match the geometric pattern of the touch points on 
+a stylus keyboard against patterns formed by the letter key center positions of 
+words in a lexicon. Similar to this approach, they developed a gesture-based stylus input method where users only need to stroke between the keys \cite{Kristensson:2004}.
 Their approaches essentially use a combination of spatial and language models. However, 
 their spatial model is not adaptive. While our focus is on tapping input, the same adaptive spatial model approach
 can be potentially applied to the gesture-based input.
@@ -206,28 +206,27 @@ surfaces, where one can use ten fingers to do traditional desktop style touch
 typing. Based on a user study of 12 participants, they find measurable
 performance improvements when the keyboard touch typing model is able to adapt to a particular user. This is quite plausible because users can have different typing styles, finger sizes, and hand shapes. They also find that changing the visual layout of the keyboard is not beneficial for ten-finger touch typing on large screens.
 
-In comparison to ten-finger typing on a large touch surface, the individual 
+Comparing to ten-finger typing on a large touch surface, the individual 
 differences in one-finger or two-thumb typing on smartphones are more subtle but
 still compelling. Rudchenko et al.~\cite{Rudchenko:2011} developed a text entry 
 game for smartphones that provides targeting words for users to type to improve 
 their typing experience. As a side effect, the game generates labeled touch 
 point data which can be used as training data to build the spatial models.
 Their results, based on a user study of 6 participants, show that key-target
-resizing based on spatial model only without personalization gives an error reduction of 18.9\% over no key-target resizing. 
-When adding personalization, there is a further 2.84\% error reduction.
+resizing based on spatial model only without personalization gives an error 
+reduction of 18.9\% over no key-target resizing.
+With personalization, there is a further 2.84\% error reduction.
 The results show the benefit of individual adaptation in an ideal condition
 where the intended key is known. In the real world application, the keys users 
 intend to hit are unknown and can only be inferred based on the current spatial 
-and language models. In our prototype implementation and evaluation we impose 
-the same real-world limitation. We build the user adaptive spatial model by 
-probabilistically assigning a key to each of the user's touch points, without
-relying on the hidden identity of the true intended key.
+and language models. In our prototype implementation we impose 
+the same real-world limitation without relying on the true intended key.
 
 The key and individual adaptive methods mentioned earlier all assume that users' input posture
 remains the same. We observe that the same individual may change hand postures even on the same device. Building on the observations made in [1], we investigate how posture adaptation can be implemented and how it can actually affect key estimation accuracy.
 
 There is also a body of work on user modeling and adaptation that are not
-directly related to touch keyboard typing, but findings from those work can
+directly related to touch keyboard typing, but can
 still be useful to guide the research in personalized STK. A
 user-adaptive system can be defined as a system that makes
 nontrivial inferences concerning properties of the user and adapts its actions
@@ -259,12 +258,8 @@ These dimensions are orthogonal to the language and the spatial models, and can 
 combined together to further increase the input accuracy and speed.
 
 \section{Research Methods}
-As smartphone keyboards become more sophisticated, and given the relatively
-complex solutions proposed that involve multiple components, multiple phases, 
-and learning,  we fear the traditional lab experiments based HCI evaluation 
-method may not be efficient or sensitive enough for researchers to make rapid 
-progress. In this paper we use a combination of HCI and ML (machine learning) 
-evaluation methods, along with algorithm and system development.
+In this paper we use a combination of HCI and ML (machine learning) methods, 
+along with algorithm and system development, to develop and evaluate the SBM.
 
 We first select a smartphone typing dataset as the empirical basis of training 
 and cross-validation. The experiment that generated the dataset had been peer 
@@ -376,9 +371,10 @@ For the analysis in the Comparison of Spatial Models section, the values for $\t
 \textit{observed} based on the dataset. This establishes the upper bound for the potential benefits from the adaptations. In section Implementation and Evaluation of the prototype, only the user is \textit{observed}; the value for the posture variable $\textsf{y}$ is \textit{inferred}.
 
 \section{Comparison of Spatial Models}
-We compare character error rate with different adaptive spatial models to analyze their
-relative effectiveness (Table \ref{tab:comparison}). This can inform us the order of the
-backoff models to use when there is not enough data for higher order models.
+We compare character error rates with different adaptive spatial models to
+analyze their relative effectiveness (Table \ref{tab:comparison} and Figure
+\ref{fig:error-bar1}).
+This can inform us the order of the backoff models to use when there is not enough data for higher order models.
 10-fold cross validation is used, and the training and testing data sets have different users.
 
 \begin{table} [tb]
@@ -409,6 +405,15 @@ backoff models to use when there is not enough data for higher order models.
   \label{tab:comparison}
 \end{table}
 
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.8\columnwidth,
+  height=0.6\columnwidth]{figures/error-rates.pdf}
+  \caption{Bar plot of error rates in Table \ref{tab:comparison} with error bars
+  indicating the standard error of the mean (SEM).}
+  \label{fig:error-bar1}
+\end{figure}
+
 The simplest model is a Gaussian distribution with zero mean $x$ and $y$
  offsets and the same spherical covariance matrix for all the keys. Key
 detection based on this model is essentially choosing the key that has the shortest Euclidean distance from the tapping coordinates. 
@@ -417,7 +422,6 @@ training data, but the same base model $N(\underline 0, \Lambda)$ is used for al
 \begin{align}          
 \hat k = \arg\max_k N(\underline c_i - \underline o_k; \underline 0, \Lambda)
 \end{align}
-
 
 \subsection{Key Adaptation}
 A basic key adaptive model has one bivariate Gaussian model
@@ -614,8 +618,8 @@ aspect, and even to test with a window size of 1 (i.e. not
 looking at the history).
 
 The sliding time window classifier gives a final probability score $p_y$ for posture
-$y$ for each touch point. Again $\displaystyle\sum_{y\in \mathcal{Y}}p_y = 1$. To evaluate the classification accuracy, we set the the
-classified posture to be $y$ if $p_y > 0.5$. With this, the overall classification 
+$y$ for each touch point. Again $\displaystyle\sum_{y\in \mathcal{Y}}p_y = 1$.
+To evaluate the classification accuracy, we set the the classified posture to be $y$ if $p_y > 0.5$. With this, the overall classification 
 accuracy for each touch point with a sliding time window
 is 86.4\% (23128 out of 26769 touch points).
 
@@ -651,8 +655,8 @@ classification in C++. The prototype SBM has flags to turn on/off certain adapti
 
 \subsection{Evaluation of Standalone SBM}
 Like \cite{Findlater:2012, Rudchenko:2011}, we evaluate the effectiveness of the standalone SBM  prototype on key estimation without a language model first. 
-Table~\ref{tab:off-device} shows the comparison of
-character error rates using SBM with different submodels turned on. The main difference between these results and those in Table~\ref{tab:comparison} is that in the prototype implementation posture is \textit{inferred} and the user specific model is built according to \textit{inferred} intended key.
+Table~\ref{tab:off-device} and Figure~\ref{fig:error-bar2} show the comparison
+of character error rates using SBM with different submodels turned on. The main difference between these results and those in Table~\ref{tab:comparison} is that in the prototype implementation posture is \textit{inferred} and the user specific model is built according to \textit{inferred} intended key.
 
 \begin{table}[tb]
   \centering
@@ -680,6 +684,15 @@ character error rates using SBM with different submodels turned on. The main dif
   \caption{Comparison of character error rates using the real-world implementation of the standalone SBM model with different submodels turned on.  These results are based on \textit{inferred} postures and intended keys for building the user specific models. Results are based on 10 test users.}
   \label{tab:off-device}
 \end{table}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.8\columnwidth,
+    height=0.6\columnwidth]{figures/error-rates2.pdf} 
+  \caption{Bar plot of error rates in Table \ref{tab:off-device} with error
+  bars indicating standard error of the mean (SEM).}
+  \label{fig:error-bar2}
+\end{figure}
 
 \subsubsection{Posture Adaptation}\label{sec:off-device-posture}
 The posture and key adaptive model uses the posture classification

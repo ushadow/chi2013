@@ -4,6 +4,7 @@
 # Library that contains plot related functions.
 library(car)
 library(graphics)
+library(ggplot2)
 
 source('analysis_lib.R')
 source('key_detection_lib.R')
@@ -382,16 +383,32 @@ PlotThreshAccuracy <- function(df, baseline, out.file) {
 }
 
 # Plots bar graph with 95% confidence interval error bars.
-PlotErrorBar <- function(summary) {
+PlotErrorBar <- function(summary, filename) {
   summary$model <- factor(summary$model, levels = summary$model)
   summary$se <- summary$sd / sqrt(summary$n)
   summary$ci <- summary$se * 1.96
-  ggplot(summary, aes(x = model, y = error.rate)) +
+  color <- '#99CCFF'
+  p <- ggplot(summary, aes(x = model, y = error.rate)) +
       xlab('spatial model') +
       ylab('error rate in %')+
-      geom_bar(position = position_dodge()) +
+      geom_bar(stat = 'identity', color = color,
+               fill = color, width = 0.6,
+               position = position_dodge(width = 0.9)) +
+      scale_fill_hue(c = 45, l = 80) +
       geom_errorbar(aes(ymin = error.rate - se, ymax = error.rate + se),
                         width = .2,
-                        position=position_dodge(.9))
+                        position=position_dodge(.9)) +
+      scale_y_continuous(expand = c(0, 0), limits = c(0, 12)) +
+      theme(panel.background = element_blank(),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            axis.text.x = element_text(angle = 20, vjust = 0.5, color = 'black',
+                                       size = 14),
+            axis.text.y = element_text(color = 'black', size = 14),
+            axis.title.x = element_text(size = 14),
+            axis.title.y = element_text(size = 14),
+            axis.line = theme_segment(color = 'black'))
+
+  ggsave(file = filename)
 }
 

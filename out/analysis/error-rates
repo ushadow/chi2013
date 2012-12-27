@@ -1,0 +1,6 @@
+n,model,error.rate,sd
+30,'bounding box',7.98,5.7
+30,'base',7.85,5.4
+30,'key',8.02,5.6
+30,'posture&key',7.06,4.4
+30,'individual&key',6.85,4.4
