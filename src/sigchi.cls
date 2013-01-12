@@ -1,10 +1,10 @@
 % chi & iui 2012 cls
 % Jean-Daniel Fekete, August 28, 2011.
-% llt 2011: re-added flushleft in \terms \category & \classification
+% llt: re-added flushleft in \terms & \category, added compatibility for the caption package
 %
 % ---- Start of example  ----
 %
-% \documentclass{chi2012}
+% \documentclass{sigchi}
 % \usepackage{times}
 % \pagenumbering{arabic}  % Arabic page numbers for submission.  Remove this line to eliminate page numbers for the camera ready copy
 % \title{The Title}
@@ -127,9 +127,7 @@
 %%%     dvips -e 0 foo.dvi >foo.ps
 %%%
 
-\typeout{Document Class `sigchi' <Jul 29, 2012>. Updated for chi 2013
-  based on chi2012.cls by Michel Beaudouin-Lafon.} % DLC
-\typeout{Document Class `chi2012' <Oct 19, 2011>. Updated for chi 2012
+\typeout{Document Class sigchi' <Oct 19, 2011>. Updated for chi 2012
   based on chi2012.cls by William Hudson and Jean-Daniel Fekete.} % DLC
 \typeout{Document Class `chi2011' <October 19, 2010>. Tweaked by Manas Tungare.} % DLC
 \typeout{Shamelessly copied from}
@@ -674,7 +672,7 @@
 
 \if@ll
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{sigchi} [2011/06/06 - V0.16]  % DLC
+  \ProvidesClass{chi2012} [2011/06/06 - V0.16]  % DLC
   \RequirePackage{latexsym}% QUERY: are these two really needed?
   \let\dooptions\ProcessOptions
 \else
@@ -866,19 +864,20 @@
 
 \def\endabstract{\if@twocolumn\else\endquotation\fi}
 
-\def\keywords#1{\if@twocolumn
+\def\keywords#1{%\if@twocolumn
 \section*{Author Keywords}
 \begin{flushleft}#1\end{flushleft}
-\else \small
-\quotation #1
-\fi}
+%\else \small
+%\quotation #1
+%\fi
+}
 
 \def\classification#1{%\if@twocolumn
 \section*{ACM Classification Keywords}
 \begin{flushleft}#1\end{flushleft}
 %\else \small
 %\quotation\the\parskip
-%\fi}
+%\fi
 }
 
 % I've pulled the check for 2 cols, since proceedings are _always_
@@ -888,7 +887,7 @@
 \begin{flushleft}#1\end{flushleft}
 %\else \small
 %\quotation\the\parskip
-%\fi}
+%\fi
 }
 
 % -- Classification needs to be a bit smart due to optionals - Gerry/Georgia November 2nd. 1999
@@ -899,9 +898,7 @@
 \ifnum\catcount=1
 \section*{ACM Classification Keywords}  % DLC
 \advance\catcount by 1\else{\unskip; }\fi
-\begin{flushleft}%
     \@ifnextchar [{\@category{#1}{#2}{#3}}{\@category{#1}{#2}{#3}[]}%
-\end{flushleft}%
 }
 
 \def\@category#1#2#3[#4]{%
@@ -927,6 +924,7 @@
 %%% caption).
 %%%
 \newtoks\copyrightnotice
+\newcounter{copyrightbox} % llt: enable compatibility with the caption package
 \def\ftype@copyrightbox{8}
 \def\@copyrightspace{
 \@float{copyrightbox}[b]
@@ -1522,16 +1520,10 @@
 \global\copyrightetc{\ } %  Need to have 'something' so that adequate space is left for pasting in a line if "confinfo" is supplied.
 
 \toappear{
-Permission to make digital or hard copies of all or part of this work for
-personal or classroom use is granted without fee provided that copies are
-not made or distributed for profit or commercial advantage and that copies
-bear this notice and the full citation on the first page. To copy otherwise,
-or republish, to post on servers or to redistribute to lists, requires prior
-specific permission and/or a fee.\\
-{\confname{CHI'13}}, April 27--May 2, 2013, Paris, France.\\
-Copyright 2013 ACM 978-1-XXXX-XXXX-X/XX/XX...\$10.00.
+	Submitted for review.
+	Camera ready papers must include the corresponding ACM copyright statement.
 }
-% End of chi2012.cls - version 0.01	
+% End of sigchi.cls - version 0.01	
 
 
 %% DanCo, 10/19/11: Added this to reduce overfull lines per Sheridan
