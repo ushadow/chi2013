@@ -63,7 +63,8 @@ breaklinks=true,
 % End of preamble. Here it comes the document.
 \begin{document}
 
-\title{Making Touchscreen Keyboards Adaptive to Keys, Hand Postures,  and Individuals---A Hierarchical Spatial Backoff Model Approach}
+\title{Making Touchscreen Keyboards Adaptive to Keys, Hand Postures,  and
+Individuals - A Hierarchical Spatial Backoff Model Approach}
 
 % Note that submissions are blind, so author information should be omitted
 \numberofauthors{2}
@@ -72,7 +73,7 @@ breaklinks=true,
     \email{yingyin@mit.edu}
   \alignauthor \ Tom Y. Ouyang\google\\
     \email{ouyang@google.com} 
-  \alignauthor \ Kurt Patridge\google\\
+  \alignauthor \ Kurt Partridge\google\\
     \email{kep@google.com} 
   \alignauthor \ Shumin Zhai\google\\
     \email{zhai@google.com}
@@ -80,7 +81,9 @@ breaklinks=true,
 %
   \sharedaffiliation
   \begin{tabular}{ccc}
-  \affaddr{{\mit}MIT CSAIL{\ }} & & \affaddr{{\google}Google Inc.{\ }}  \\
+  \affaddr{{\mit}Massachusetts Institute of Technology{\ }} & &
+  \affaddr{{\google}Google Inc.{\ }}
+  \\
   \affaddr{32 Vassar St. } & & \affaddr{1600 Amphitheatre Parkway}   \\
   \affaddr{Cambridge, MA U.S.} & & \affaddr{Mountain View, CA U.S.}
   \end{tabular}
@@ -108,7 +111,7 @@ confidence, and if the submodel has enough training data from the user.  We
 introduce the \textit{backoff} mechanism to fall back to a simpler model if 
 either of these conditions are not met.  We implemented a prototype system 
 capable of reducing the language-model-independent error rate by 13.2\% using an
-online posture classifier with  86.4\% accuracy.  Further improvements in error
+online posture classifier with 86.4\% accuracy. Further improvements in error
 rate may be possible with even better posture classification.
  
 \end{abstract}
@@ -193,6 +196,8 @@ approach is able to achieve an accuracy rate of 86.4\%.
 Third, in the ``Evaluation of Standalone SBM'' section, we show that posture
 classification combined with adaptive models improves spatial model performance,
 reducing the character error rate by 13.2\% over a non-adaptive baseline model.
+
+\pagebreak
 
 \section{Related Work}
 
@@ -334,8 +339,8 @@ separate Gaussian models $N(\underline\mu_{y,u,k},
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=0.9\columnwidth]{figures/hierarchy.pdf}
-  \caption{A complete hierarchical spatial backoff model. For practical purposes, not all the submodels need to be included. The models with thicker lines are the ones we analyzed and included in the prototype implementation.}
+  \includegraphics[width=1\columnwidth,height=0.6\columnwidth]{figures/hierarchy-embed-font.pdf}
+  \caption{A complete hierarchical spatial backoff model. For practical purposes, not all the submodels need to be included. The models with thicker lines are the ones we included in the prototype implementation.}
   \label{fig:hierarchy}
 \end{figure}
 
@@ -346,8 +351,8 @@ Figure~\ref{fig:hierarchy} shows a \textit{complete} hierarchy of the submodels 
 possible combinations of the three adaptive factors. However, depending on the
 relative effectiveness of the submodels, it may not be necessary to include all of
 them in an implementation. In this paper, we focus on analyzing the key-adaptive model, posture- and key-adaptive model and user- and key-adaptive model.
-The order of the backoff process, and the priority of the models at the same level to use can
-also be design choices, but the analysis in the next section gives
+The order of the backoff process, and the priority of the submodels at the same
+level can also be design choices, but the analysis in the next section gives
 guidance and suggestions on how to determine an order.
 
 \section{Key Estimation Formulation}\label{sec:formulation}
@@ -435,8 +440,8 @@ backoff models to use when there is not enough data for higher level models.
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=0.8\columnwidth,
-  height=0.6\columnwidth]{figures/error-rates.pdf}
+  \includegraphics[width=1\columnwidth,
+  height=0.7\columnwidth]{figures/error-rates-embed-font.pdf}
   \caption{Bar plot of error rates in Table \ref{tab:comparison} with error bars
   indicating the standard error of the mean (SEM).}
   \label{fig:error-bar1}
@@ -471,15 +476,15 @@ of the two models closely models the underlying distributions of the touch point
 \begin{figure}[tb]
   \centering
   \subfigure[Key-adaptive model]{
-    \includegraphics[width=0.47\columnwidth]{figures/key-model.pdf}
+    \includegraphics[width=0.47\columnwidth]{figures/key-model-embed-font.pdf}
     \label{fig:key-adaptive}
   } ~
   \subfigure[Posture- and key-adaptive model for one-finger input]{
-    \includegraphics[width=0.47\columnwidth]{figures/posture-t.pdf}
+    \includegraphics[width=0.47\columnwidth]{figures/posture-t-embed-font.pdf}
     \label{fig:one-finger}
   }
   \subfigure[Posture- and key-adaptive model for two-thumb input]{
-    \includegraphics[width=0.47\columnwidth]{figures/posture-tt.pdf}
+    \includegraphics[width=0.47\columnwidth]{figures/posture-tt-embed-font.pdf}
     \label{fig:two-thumb}
   }
   \caption{Comparison of effective key areas with different spatial models.  Each colored area presents the region such that if the user taps in that region, the spatial model will classify that key with the corresponding key label.}
@@ -572,7 +577,7 @@ should be at least 55 when the error rate becomes lower than that when using key
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=0.9\columnwidth]{figures/individual-adapt.pdf}
+  \includegraphics[width=0.9\columnwidth]{figures/chart1.pdf}
   \caption{Graph showing how key estimation error rate for key E changes as the number of
   points used to build the user-adaptive model for key E increases.}
   \label{fig:user-adapt}
@@ -625,14 +630,6 @@ model (key-adaptive or base model). Furthermore it can enable the posture
 adaptive spatial model only when the probability score for one posture is much 
 higher than the other.
 
-% \begin{figure}[tb]
-%   \centering
-%   \includegraphics[width=0.8\columnwidth]{figures/boxplot.pdf}
-%   \caption{Correlation between time elapsed and log square distance between
-%   consecutive key presses for every 10 keys. There is a stronger correlation for
-%   one- finger input than that for two-thumb input.}
-%   \label{fig:boxplot}
-% \end{figure}
 \section{Implementation and Evaluation}
 The key estimation process with the proposed SBM fits nicely with the
 Chain of Responsibility design pattern. Each higher level model can
@@ -686,14 +683,15 @@ than the non-adaptive one.
   \hline
   \end{tabular}
   \caption{Comparison of character error rates using the real-world implementation of the standalone SBM model across different submodels.  
-  These results are based on \textit{inferred} postures and intended keys for building the user specific models. Results are based on 10 test users.}
+  These results are based on \textit{inferred} postures and intended keys for
+  building the user specific models. Results are based on 10 test users.}
   \label{tab:off-device}
 \end{table}
 
 \begin{figure}[tb]
   \centering
-  \includegraphics[width=0.8\columnwidth,
-  height=0.6\columnwidth]{figures/error-rates2.pdf}
+  \includegraphics[width=1\columnwidth,
+  height=0.7\columnwidth]{figures/error-rates2-embed-font.pdf}
   \caption{Bar plot of error rates in Table \ref{tab:off-device} with error
   bars indicating standard error of the mean (SEM).}
   \label{fig:error-bar2}
@@ -718,57 +716,12 @@ There is a trade-off in setting the $T_{\text{posture}}$ threshold. When
  increases because we can no longer take advantage of posture adaptation. The error rate in Table~\ref{tab:off-device} for SBM with posture- and key-adaptive model as the highest order model is obtained by setting $T_{\text{posture}} = 0.94$.
 
 \begin{figure}[tb]
- \includegraphics[width=0.9\columnwidth]{figures/error-confidence-cropped.pdf}
+  \centering
+  \includegraphics[width=1\columnwidth]{figures/chart2-embed-font.pdf}
   \caption{Graph showing how key estimation error rate changes as the confidence
   threshold for posture classification increases.}
   \label{fig:posture-confidence}
 \end{figure}
-
-% \begin{figure*}[tb]
-%   \centering
-%   \subfigure[Errors when using key-adaptive model]{
-%     \includegraphics[width=0.49\columnwidth]{figures/sim-result-1.pdf}
-%     \label{fig:error-key}
-%   } 
-%   \subfigure[Errors when using posture- and key-adaptive model]{
-%     \includegraphics[width=0.49\columnwidth]{figures/sim-result-2.pdf}
-%     \label{fig:error-posture}
-%   }
-%   \subfigure[Errors when using key-adaptive model but not when using posture- and key-
-%   adaptive model]{
-%     \includegraphics[width=0.49\columnwidth]{figures/sim-result-1-2.pdf}
-%     \label{fig:error-key-posture}
-%   }
-%   \subfigure[Errors when using posture and key-adaptive model but not when using key-
-%   adaptive model]{
-%     \includegraphics[width=0.49\columnwidth]{figures/sim-result-2-1.pdf}
-%     \label{fig:error-posture-key}
-%   }
-%   \subfigure{
-%     \includegraphics[width=0.3\columnwidth]{figures/sim-result-colorkey.pdf}
-%   }
-%   \caption{Confusion matrices for key estimation evaluation with different
-%   spatial models as the highest order model. The row labels are the
-%   target keys, and the column labels are the predicted keys.  The color of the cells
-% represents the number of errors for a particular pair of confusion. The more red the color,
-% the greater the number of errors.}
-%   \label{fig:confusion-matrices}
-% \end{figure*}
-
-% The most number of corrections by using posture- and key-adaptive model is for
-% the E and W pair. Figure~\ref{fig:e-w-ellipses} shows a closer look at the Gaussian distributions for the two keys for the different
-% adaptive models. We can see the Gaussian distributions for key-adaptive model (black ellipses) shift slightly to the right. This causes the touch points on the boundary between W and 
-% E to be mis-classified as W. However, the ellipses based on the posture- and key-
-% adaptive model for the two-thumb input shift to the left slightly, and this changes
-% the classification of those boundary points to E correctly.
-
-% \begin{figure}[tb]
-%   \centering
-%   \includegraphics[width=1\columnwidth]{figures/key-posture-ellipse.png}
-%   \caption{Each ellipse represents the 0.95 confidence ellipse of the Gaussian model built based on a set of touch points. Each black ellipse is based on the all touch points intended for either W or E. Each blue ellipse is based on touch points from two-thumb input only. The red points are the touch points intended for E but are mis-classified as W when using the key-adaptive model. 
-% }
-%   \label{fig:e-w-ellipses}
-% \end{figure}
 
 \subsubsection{User Adaptation}
 When computing the user- and key-adaptive model, for every touch point
@@ -801,13 +754,15 @@ can further backoff to the posture- and key-adaptive model.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\columnwidth]{figures/partial-hierarchy.pdf}
-  \caption{Partial hierarchical model implemented in our prototype. The numbers indicate the order of the 
+  \includegraphics[width=1\columnwidth]{figures/partial-hierarchy-embed-font.pdf}
+  \caption{Partial hierarchical model implemented in our prototype. The numbers indicate the order of the
 submodels to use during backoff.}
   \label{fig:partial-hierarchy}
 \end{figure}
 Note that because the dataset is a between-subjects study, we cannot study
 the full effect of posture adaptation for each individual. We believe that there could be additional improvement, but further study is required to verify it.
+
+\pagebreak
 
 \section{Discussion and Future Work}
 We have shown the potential of posture, user, and key adaptation for 
